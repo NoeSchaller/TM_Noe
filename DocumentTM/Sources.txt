@@ -1,0 +1,22 @@
+le 19.10.21:
+	constraint:
+		https://phaser.io/examples/v3/view/physics/matterjs/basic-constraint
+		https://newdocs.phaser.io/docs/3.55.2/focus/Phaser.Physics.Matter.Factory-constraint
+	hitox shape:
+		https://www.codeandweb.com/physicseditor/tutorials/how-to-create-physics-shapes-for-phaser-3-and-matterjs
+	png cut:
+		https://www.remove.bg/
+	texture json:
+		https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-for-phaser3
+
+le 24.10.21
+	collisions:
+		https://blog.ourcade.co/posts/2020/phaser-3-matter-physics-collision-filter/
+le 08.11.21
+	camera:
+		https://photonstorm.github.io/phaser3-docs/Phaser.Cameras.Scene2D.Camera.html
+		https://rexrainbow.github.io/phaser3-rex-notes/docs/site/camera/#scroll	
+	boutons:
+		https://snowbillr.github.io/blog/2018-07-03-buttons-in-phaser-3/
+		
+		

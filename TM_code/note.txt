@@ -1,0 +1,4 @@
+echelle : 100px = 10cm
+coefficient : 
+    speed 
+    friction
