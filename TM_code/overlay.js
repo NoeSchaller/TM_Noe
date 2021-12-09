@@ -10,13 +10,13 @@ class Over extends Phaser.Scene {
 
     create() {
         this.simulation = game.scene.keys.simulation
-        this.echelle = this.add.image(100,570,'echelle')
+        this.echelle = this.add.image(100,770,'echelle')
         this.buttons = []
 
         this.camera = new Camera(this, this.simulation)
     }
 
     update() {
-        this.camera.update(this, this.simulation)
+        this.camera.update(this.simulation)
     }
 }

@@ -1,54 +1,64 @@
 class robot{
-    constructor(that, id, x, y, angle=0, scale=1){
+    constructor(that, id, x, y, angle=0){
+        this.scene = game.scene.keys.simulation
+        
+        //mise  en place de variable utilisables plus tard
+        this.scale = 0.4
+        this.frottement = 0
+
+        this.LastPosL = {x: x-(89)*this.scale, y: y+(45)*this.scale}
+        this.LastPosR = {x: x+(89)*this.scale, y: y+(45)*this.scale}
+
+        this.state = {wheel:{left:0, right:0},led:{left:0, right:0}, ir:{left:0, right:0}, id:id}
         
         //mise en place du "corps" du robot
         this.body = that.matter.add.sprite(x,y, 'bodyPic', '', {shape: that.cache.json.get('bodyShape').body}).setFrictionAir(0)
-        this.Lwheel = that.matter.add.image(x-(89)*scale,y+(45)*scale,'wheel').setFrictionAir(0.5)
-        this.Rwheel = that.matter.add.image(x+(89)*scale,y+(45)*scale,'wheel').setFrictionAir(0.5)
+        this.Lwheel = that.matter.add.image(x-(89)*this.scale,y+(45)*this.scale,'wheel').setFrictionAir(0.5)
+        this.Rwheel = that.matter.add.image(x+(89)*this.scale,y+(45)*this.scale,'wheel').setFrictionAir(0.5)
         
             //la roue gauche est attachée au corps
         that.matter.add.constraint(this.body, this.Lwheel,'undefined' , 1, {
-            pointA: {x:-70*scale,y:-13*scale},
-            pointB: {x:-13*scale,y:58*scale}
+            pointA: {x:-70*this.scale,y:-13*this.scale},
+            pointB: {x:-13*this.scale,y:58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Lwheel,'undefined' , 1, {
-            pointA: {x:-70*scale,y:102*scale},
-            pointB: {x:-13*scale,y:-58*scale}
+            pointA: {x:-70*this.scale,y:102*this.scale},
+            pointB: {x:-13*this.scale,y:-58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Lwheel,'undefined' , 1, {
-            pointA: {x:-70*scale,y:102*scale},
-            pointB: {x:-13*scale,y:58*scale}
+            pointA: {x:-70*this.scale,y:102*this.scale},
+            pointB: {x:-13*this.scale,y:58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Lwheel,'undefined' , 1, {
-            pointA: {x:-70*scale,y:-13*scale},
-            pointB: {x:-13*scale,y:-58*scale}
+            pointA: {x:-70*this.scale,y:-13*this.scale},
+            pointB: {x:-13*this.scale,y:-58*this.scale}
         })
 
             // la roue droite est attachée au corps
         that.matter.add.constraint(this.body, this.Rwheel,'undefined' , 1, {
-            pointA: {x:70*scale,y:-13*scale},
-            pointB: {x:13*scale,y:58*scale}
+            pointA: {x:70*this.scale,y:-13*this.scale},
+            pointB: {x:13*this.scale,y:58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Rwheel,'undefined' , 1, {
-            pointA: {x:70*scale,y:102*scale},
-            pointB: {x:13*scale,y:-58*scale}
+            pointA: {x:70*this.scale,y:102*this.scale},
+            pointB: {x:13*this.scale,y:-58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Rwheel,'undefined' , 1, {
-            pointA: {x:70*scale,y:102*scale},
-            pointB: {x:13*scale,y:58*scale}
+            pointA: {x:70*this.scale,y:102*this.scale},
+            pointB: {x:13*this.scale,y:58*this.scale}
         })
         that.matter.add.constraint(this.body, this.Rwheel,'undefined' , 1, {
-            pointA: {x:70*scale,y:-13*scale},
-            pointB: {x:13*scale,y:-58*scale}
+            pointA: {x:70*this.scale,y:-13*this.scale},
+            pointB: {x:13*this.scale,y:-58*this.scale}
         })
         //mise en place du capteur ultrason
-        this.ultra = that.matter.add.sprite(x,y-4080*scale, 'ultra', '', {shape: that.cache.json.get('ultraShape').ultra}).setScale(scale/8*250).setCollidesWith(0).setVisible(false)
+        this.ultra = that.matter.add.sprite(x,y-4080*this.scale, 'ultra', '', {shape: that.cache.json.get('ultraShape').ultra}).setScale(this.scale/8*250).setCollidesWith(0).setVisible(false)
 
         this.raycaster = that.raycasterPlugin.createRaycaster()
         this.raycaster.mapGameObjects(that.walls)
         this.rayCone = this.raycaster.createRay({origin: {
             x: x,
-            y: y-100*scale
+            y: y-100*this.scale
           },
           autoSlice: true,
           collisionRange: 2550
@@ -61,59 +71,47 @@ class robot{
         
         //mise en place des capteurs infrarouges
         this.irL = that.matter.add.gameObject(
-            that.add.circle(x-18*scale,y-40*scale,5*scale, 0xffffff),
-            that.matter.add.circle(x-18*scale,y-40*scale,1)
+            that.add.circle(x-18*this.scale,y-40*this.scale,5*this.scale, 0xffffff),
+            that.matter.add.circle(x-18*this.scale,y-40*this.scale,1)
         ).setCollidesWith(0).setDepth(2)
 
         this.irR = that.matter.add.gameObject(
-            that.add.circle(x-18*scale,y-40*scale,5*scale, 0xffffff),
-            that.matter.add.circle(x+18*scale,y-40*scale,1)
+            that.add.circle(x-18*this.scale,y-40*this.scale,5*this.scale, 0xffffff),
+            that.matter.add.circle(x+18*this.scale,y-40*this.scale,1)
         ).setCollidesWith(0).setDepth(2)
         
         //mise en place des leds
-        this.LLed = that.add.circle(x-45*scale,y-80*scale,10*scale,0x500000).setDepth(2)
-        this.RLed = that.add.circle(x+45*scale,y-80*scale,10*scale,0x500000).setDepth(2)
-
-        //mise  en place de variable utilisables plus tard
-        this.bot = that.add.group([this.body,this.Lwheel,this.Rwheel])
-        this.component =that.add.group([this.irL, this.irR, this.ultra, this.LLed, this.RLed])
-
-
-        this.LastPosL = {x: x-(89)*scale, y: y+(45)*scale}
-        this.LastPosR = {x: x+(89)*scale, y: y+(45)*scale}
-        this.scale = scale
-
-        this.state = {wheel:{left:{speed:1,on:false}, right:{speed:1,on:false}},led:{left:false, right:false}, id:id}
+        this.LLed = that.add.circle(x-45*this.scale,y-80*this.scale,10*this.scale,0x500000).setDepth(2)
+        this.RLed = that.add.circle(x+45*this.scale,y-80*this.scale,10*this.scale,0x500000).setDepth(2)
         
-      
         // adaptation de l'angle et de l'échelle en fonction des paramètres
-        this.bot.scaleXY(scale-1, scale-1)
+        this.component = that.add.group([this.irL, this.irR, this.ultra, this.LLed, this.RLed])
+
+        this.bot = that.add.group([this.body,this.Lwheel,this.Rwheel])
+
+        this.bot.scaleXY(this.scale-1, this.scale-1)
         this.bot.angle(angle)
         this.bot.setDepth(1)
         this.bot.rotateAround({x:x,y:y},angle/360*2*Math.PI)
-
-        // s'ajoute à la liste des robots
-        that.robots.push(this)
     };
 
     setWheel(that){
-        if(this.state.wheel.left.on){
-                this.Lwheel.setVelocity(
-                    Math.cos (this.Lwheel.rotation-Math.PI/2)*this.state.wheel.left.speed,
-                    Math.sin(this.Lwheel.rotation-Math.PI/2)*this.state.wheel.left.speed)
-        }else{
-            if(that.frame % 10 == 0){
+        this.Lwheel.setVelocity(
+            Math.cos (this.Lwheel.rotation-Math.PI/2)*this.state.wheel.left,
+            Math.sin(this.Lwheel.rotation-Math.PI/2)*this.state.wheel.left)
+
+        if(this.state.wheel.left == 0){
+            if(that.frame % this.frottement == 0){
                 this.Lwheel.setVelocity(0,0).setPosition(this.LastPosL.x,this.LastPosL.y)
             }
         }
 
-
-        if(this.state.wheel.right.on){
-                this.Rwheel.setVelocity(
-                    Math.cos(this.Rwheel.rotation-Math.PI/2)*this.state.wheel.right.speed,
-                    Math.sin(this.Rwheel.rotation-Math.PI/2)*this.state.wheel.right.speed)
-        }else{
-            if(that.frame % 10 == 0){
+        this.Rwheel.setVelocity(
+            Math.cos(this.Rwheel.rotation-Math.PI/2)*this.state.wheel.right,
+             Math.sin(this.Rwheel.rotation-Math.PI/2)*this.state.wheel.right)
+        
+        if(this.state.wheel.left == 0){
+            if(that.frame % this.frottement == 0){
                 this.Rwheel.setVelocity(0,0).setPosition(this.LastPosR.x,this.LastPosR.y)
             }
         }
@@ -122,7 +120,7 @@ class robot{
 
     };
 
-    setLed(){
+    seeLed(){
         if(this.state.led.left){
             this.LLed.fillColor = 0xff0000
         }else{
@@ -137,28 +135,36 @@ class robot{
     };
 
     setIrColor(that){
+        //console.log(this.SeeIrL(that))
         if(this.SeeIrL(that)){
             this.irL.fillColor = 0xffffff
+            this.state.ir.left = 1
         }else{
             this.irL.fillColor = 0x404040
+            this.state.ir.left = 0
         }
 
         if(this.SeeIrR(that)){
             this.irR.fillColor = 0xffffff
+            this.state.ir.right = 1
         }else{
             this.irR.fillColor = 0x404040
+            this.state.ir.right = 0
         }
+        //console.log(this.state.ir)
     };
 
     SeeIrL(that){
+        console.log(that.matter.overlap(this.irL, that.marks[1].body))
         for(let i = 0; i < that.marks.length; i++){
+            
             if(that.matter.overlap(this.irL, that.marks[i].body)){
                 var color = that.textures.getPixel(
                     (this.irL.x-that.marks[i].pos.x+that.marks[i].body.width*that.marks[i].scale.x/2)/that.marks[i].scale.x,
                     (this.irL.y-that.marks[i].pos.y+that.marks[i].body.width*that.marks[i].scale.y/2)/that.marks[i].scale.y,
                     that.marks[i].pic)
                 if(
-                    color == null){
+                    color == null){console.log('????')
                 }else{
                     if(
                         color.v  < 0.2 & color.a != 0){
@@ -174,8 +180,14 @@ class robot{
         for(let i = 0; i < that.marks.length; i++){
             if(that.matter.overlap(this.irR, that.marks[i].body)){
                 var color = that.textures.getPixel(
-                    (this.irR.x-that.marks[i].pos.x+that.marks[i].body.width*that.marks[i].scale.x/2)/that.marks[i].scale.x,
-                    (this.irR.y-that.marks[i].pos.y+that.marks[i].body.width*that.marks[i].scale.y/2)/that.marks[i].scale.y,
+                    (this.irR.x-that.marks[i].pos.x
+                        +that.marks[i].body.width
+                        *that.marks[i].scale.x/2
+                    )/that.marks[i].scale.x,
+                    (this.irR.y-that.marks[i].pos.y
+                        +that.marks[i].body.width
+                        *that.marks[i].scale.y/2
+                    )/that.marks[i].scale.y,
                     that.marks[i].pic)
                 if(
                     color == null){
@@ -232,12 +244,12 @@ class robot{
 
     update(that){
         this.setWheel(that)
-        this.setLed()
+        this.seeLed()
         this.setComponent()
         this.setIrColor(that)
     }
     
-};
+}
 
 
 
@@ -254,7 +266,7 @@ class wallRect{
 
         that.walls.push(this.body)
     }
-};
+}
 
 class markRect{
     constructor(that, PointAX, PointAY, PointBX, PointBY){
@@ -270,7 +282,7 @@ class markRect{
 
         that.marks.push(this)
     }
-};
+}
 class markPic{
     constructor(that, x, y, pic, scale=1){
         this.pic = pic
@@ -280,7 +292,7 @@ class markPic{
 
         that.marks.push(this)
     }
-};
+}
 
 
 
@@ -321,15 +333,16 @@ class Camera{
             }))
         )
 
+        
         for(let i=0; i < simulation.robots.length; i++){
-            that.buttons.push(that.add.text(10,140+30*i,simulation.robots[i].state.id, {color: '#000', backgroundColor: '#999', padding: 3})
+            that.buttons.push(that.add.text(10,140+30*i,simulation.robots[i].robot.state.id, {color: '#000', backgroundColor: '#999', padding: 3})
                 .setInteractive().on('pointerdown', () => {this.follow = i, this.cursor.setPosition(15+that.buttons[i+1].width,140+30*i)}))
         }
 
         this.cursor.setPosition(15+that.buttons[1].width,140)
     };
 
-    update(that, sim){
+    update(sim){
         let inputs = sim.input.keyboard.addKeys({
             up: 'up',
             down: 'down',
@@ -357,8 +370,8 @@ class Camera{
             }
             
         }else{
-            this.cam.startFollow(sim.robots[this.follow].body);
+            this.cam.startFollow(sim.robots[this.follow].robot.body);
         }
 
     }
-};
+}

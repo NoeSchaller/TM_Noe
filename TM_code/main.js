@@ -1,9 +1,9 @@
 const config ={
-    width:600,
-    height: 600,
+    width:800,
+    height: 800,
     backgroundColor : 0xcccac0,
     type: Phaser.AUTO,
-    scene : [Simul, Over, Demonstration],
+    scene : [Simul, Over],
     physics: {
         default: 'matter',
         matter: {
