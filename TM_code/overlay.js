@@ -1,16 +1,19 @@
 class Over extends Phaser.Scene {
 
-    constructor () {
+    constructor() {
         super('overlay');
     }
 
+    init(data) {
+        this.simulation = data
+    }
+
     preload() {
-        this.load.image('echelle','assets/scale.png')
+        this.load.image('echelle', 'assets/scale.png')
     }
 
     create() {
-        this.simulation = game.scene.keys.simulation
-        this.echelle = this.add.image(100,770,'echelle')
+        this.echelle = this.add.image(100, 770, 'echelle')
         this.buttons = []
 
         this.camera = new Camera(this, this.simulation)

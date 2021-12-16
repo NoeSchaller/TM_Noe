@@ -1,5 +1,14 @@
 {
-    "bots": ["new botLight(this, 'bob', 400, 300)", "new botLight(this, 'nb2', 100, 300, 45)"],
-    "walls": ["new wallRect(this, 600, 0, 800, 200)"],
-    "marks": ["new markPic(this, 400, 100, 'test')","new markPic(this, 200, 100, 'test2')"]
+    "bots": [
+        "new botLight(this, 'bob', 400, 300)",
+        "new botLight(this, 'nb2', 100, 300, 45)"
+    ],
+    "walls": [
+        "new wallRect(this, 600, 0, 800, 200)"
+    ],
+    "marks": [
+        "new markPic(this, 400, 100, 'test')",
+        "new markPic(this, 200, 100, 'test2')",
+        "new markRect(this, 0, 0, 100,100)"
+    ]
 }
