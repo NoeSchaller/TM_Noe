@@ -189,11 +189,9 @@ class robot {
                     that.marks[i].pic)
                 if (
                     color == null) {
-                } else {
-                    if (
+                } else if (
                         color.v < 0.2 & color.a != 0) {
                         return true
-                    }
                 }
             }
         }
