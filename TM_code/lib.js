@@ -61,7 +61,9 @@ class robot {
             },
             autoSlice: true,
             collisionRange: 2550
-        }).setConeDeg(60).setAngleDeg(this.body.angle - 90)
+        })
+            .setConeDeg(60)
+            .setAngleDeg(this.body.angle - 90)
 
         this.raycaster.mapGameObjects(that.walls, true);
 
@@ -70,18 +72,41 @@ class robot {
 
         //mise en place des capteurs infrarouges
         this.irL = that.matter.add.gameObject(
-            that.add.circle(x - 18 * this.scale, y - 40 * this.scale, 5 * this.scale, 0xffffff),
-            that.matter.add.circle(x - 18 * this.scale, y - 40 * this.scale, 1)
+            that.add.circle(
+                x - 18 * this.scale, y - 40 * this.scale,
+                5 * this.scale,
+                0xffffff
+            ),
+            that.matter.add.circle(
+                x - 18 * this.scale,
+                y - 40 * this.scale,
+                1)
         ).setCollidesWith(0).setDepth(2)
 
         this.irR = that.matter.add.gameObject(
-            that.add.circle(x - 18 * this.scale, y - 40 * this.scale, 5 * this.scale, 0xffffff),
-            that.matter.add.circle(x + 18 * this.scale, y - 40 * this.scale, 1)
+            that.add.circle(
+                x - 18 * this.scale,
+                y - 40 * this.scale,
+                5 * this.scale,
+                0xffffff),
+            that.matter.add.circle(
+                x + 18 * this.scale,
+                y - 40 * this.scale,
+                1)
         ).setCollidesWith(0).setDepth(2)
 
         //mise en place des leds
-        this.LLed = that.add.circle(x - 45 * this.scale, y - 80 * this.scale, 10 * this.scale, 0x500000).setDepth(2)
-        this.RLed = that.add.circle(x + 45 * this.scale, y - 80 * this.scale, 10 * this.scale, 0x500000).setDepth(2)
+        this.LLed = that.add.circle(
+            x - 45 * this.scale,
+            y - 80 * this.scale,
+            10 * this.scale,
+            0x500000
+        ).setDepth(2)
+        this.RLed = that.add.circle(x + 45 * this.scale,
+            y - 80 * this.scale,
+            10 * this.scale,
+            0x500000
+        ).setDepth(2)
 
         // adaptation de l'angle et de l'échelle en fonction des paramètres
         this.component = that.add.group([this.irL, this.irR, this.ultra, this.LLed, this.RLed])
@@ -178,20 +203,16 @@ class robot {
         for (let i = 0; i < that.marks.length; i++) {
             if (that.matter.overlap(this.irR, that.marks[i].body)) {
                 var color = that.textures.getPixel(
-                    (this.irR.x - that.marks[i].pos.x
-                        + that.marks[i].body.width
-                        * that.marks[i].scale.x / 2
+                    (this.irR.x - that.marks[i].pos.x + that.marks[i].body.width * that.marks[i].scale.x / 2
                     ) / that.marks[i].scale.x,
-                    (this.irR.y - that.marks[i].pos.y
-                        + that.marks[i].body.width
-                        * that.marks[i].scale.y / 2
+                    (this.irR.y - that.marks[i].pos.y + that.marks[i].body.width * that.marks[i].scale.y / 2
                     ) / that.marks[i].scale.y,
                     that.marks[i].pic)
                 if (
                     color == null) {
                 } else if (
-                        color.v < 0.2 & color.a != 0) {
-                        return true
+                    color.v < 0.2 & color.a != 0) {
+                    return true
                 }
             }
         }
@@ -250,13 +271,13 @@ class robot {
 
 
 class wallRect {
-    constructor(that, PointAX, PointAY, PointBX, PointBY) {
+    constructor(that, x, y, width, heigth) {
         this.body = that.matter.add.gameObject(
             that.add.rectangle(
-                (PointAX + PointBX) / 2,
-                (PointAY + PointBY) / 2,
-                PointAX - PointBX,
-                PointAY - PointBY,
+                x,
+                y,
+                width,
+                heigth,
                 0xff00000)
         ).setStatic(true)
 
@@ -265,26 +286,26 @@ class wallRect {
 }
 
 class markRect {
-    constructor(that, PointAX, PointAY, PointBX, PointBY) {
+    constructor(that, x, y, width, height) {
         this.pic = 'mark'
-        this.pos = { x: (PointAX + PointBX) / 2, y: (PointAY + PointBY) / 2 }
-        this.scale = { x: PointAX - PointBX, y: PointAY - PointBY }
+        this.pos = { x: x, y: y }
+        this.scale = { x: width, y: height }
         this.body = that.matter.add.image(
-            (PointAX + PointBX) / 2,
-            (PointAY + PointBY) / 2,
+            y,
+            x,
             'mark')
-            .setScale(PointAX - PointBX, PointAY - PointBY)
+            .setScale(width, height)
             .setCollidesWith(0)
 
         that.marks.push(this)
     }
 }
-class markPic {
-    constructor(that, x, y, pic, scale = 1) {
-        this.pic = pic
+class Picture {
+    constructor(that, key, x, y) {
+        this.key = String(key)
         this.pos = { x: x, y: y }
-        this.scale = { x: scale, y: scale }
-        this.body = that.matter.add.image(x, y, pic).setScale(scale).setCollidesWith(0)
+        this.scale = { x: 1, y: 1 }
+        this.body = that.matter.add.image(x, y, key).setCollidesWith(0)
 
         that.marks.push(this)
     }
@@ -311,16 +332,18 @@ class Camera {
     constructor(that, simulation) {
         this.cam = simulation.cameras.main
         this.follow = 0
-        this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20 })
+        this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20})
 
         that.add.text(10, 10, '+', { color: '#000', backgroundColor: '#fff', padding: 1, fontSize: 40 })
             .setInteractive().on('pointerdown', () => {
-                this.cam.zoom *= 1.2, that.echelle.scale *= 1.2
+                this.cam.zoom *= 1.2,
+                that.echelle.scale *= 1.2
             },
 
                 that.add.text(10, 60, '-', { color: '#000', backgroundColor: '#fff', padding: 1, fontSize: 40 })
                     .setInteractive().on('pointerdown', () => {
-                        this.cam.zoom /= 1.2, that.echelle.scale /= 1.2
+                        this.cam.zoom /= 1.2,
+                        that.echelle.scale /= 1.2
                     }),
 
                 that.buttons.push(that.add.text(10, 110, 'Free', { color: '#000', backgroundColor: '#999', padding: 3 })
@@ -331,8 +354,18 @@ class Camera {
 
 
         for (let i = 0; i < simulation.light.length; i++) {
-            that.buttons.push(that.add.text(10, 140 + 30 * i, simulation.light[i].robot.state.id, { color: '#000', backgroundColor: '#999', padding: 3 })
-                .setInteractive().on('pointerdown', () => { this.follow = i, this.cursor.setPosition(15 + that.buttons[i + 1].width, 140 + 30 * i) }))
+            that.buttons.push(
+                that.add.text(
+                    10,
+                    140 + 30 * i,
+                    simulation.light[i].robot.state.id,
+                    { color: '#000', backgroundColor: '#999', padding: 3 }
+                    )
+                .setInteractive().on('pointerdown', () => {
+                    this.follow = i,
+                    this.cursor.setPosition(
+                        15 + that.buttons[i + 1].width,
+                        140 + 30 * i) }))
         }
 
         this.cursor.setPosition(15 + that.buttons[1].width, 140)

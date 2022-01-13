@@ -1,10 +1,10 @@
 class simulation {
-    constructor(width, height, map) {
+    constructor(width, height, map, background = 0xcccac0) {
         this.Light = ''
         this.game = new Phaser.Game({
             width: width,
             height: height,
-            backgroundColor: 0xcccac0,
+            backgroundColor: background,
             type: Phaser.AUTO,
             scene: [new Simul(this, map), Over],
             physics: {
@@ -14,7 +14,6 @@ class simulation {
                     debug: 0
                 }
             },
-            render: {},
             plugins: {
                 scene: [
                     {
