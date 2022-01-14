@@ -302,7 +302,7 @@ class markRect {
 }
 class Picture {
     constructor(that, key, x, y) {
-        this.key = String(key)
+        this.pic = String(key)
         this.pos = { x: x, y: y }
         this.scale = { x: 1, y: 1 }
         this.body = that.matter.add.image(x, y, key).setCollidesWith(0)
