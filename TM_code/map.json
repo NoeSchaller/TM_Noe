@@ -1,16 +1,14 @@
 {
     "bots": [
-        "new botLight('bob', 400, 300)",
-        "new botLight('nb2', 100, 300, 45)"
+        "new botLight('N°1', 300, 300, 70)"
     ],
     "walls": [
-        "new wallRect(600, 0, 200, 200)"
+        "new wallRect(100, 200, 50, 200)"
     ],
     "marks": [
-        "new markRect(0, 0, 100,100)"
+        "new markRect(400, 500, 100, 100)"
     ],
     "pictures": [
-        "new Picture(400, 100, 'assets/irTest.png')",
-        "new Picture(200, 100, 'assets/irTest2.png')"
+        "new Picture(400, 100, 'assets/Logo_csud.png')"
     ]
 }

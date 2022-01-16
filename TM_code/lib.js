@@ -159,7 +159,6 @@ class robot {
     };
 
     setIrColor(that) {
-        //console.log(this.SeeIrL(that))
         if (this.SeeIrL(that)) {
             this.irL.fillColor = 0xffffff
             this.state.ir.left = 1
@@ -175,7 +174,6 @@ class robot {
             this.irR.fillColor = 0x404040
             this.state.ir.right = 0
         }
-        //console.log(this.state.ir)
     };
 
     SeeIrL(that) {
@@ -289,11 +287,8 @@ class markRect {
     constructor(that, x, y, width, height) {
         this.pic = 'mark'
         this.pos = { x: x, y: y }
-        this.scale = { x: width, y: height }
-        this.body = that.matter.add.image(
-            y,
-            x,
-            'mark')
+        this.scale = { x: width * 20, y: height * 20 }
+        this.body = that.matter.add.image(y, x, 'mark')
             .setScale(width, height)
             .setCollidesWith(0)
 
@@ -332,18 +327,18 @@ class Camera {
     constructor(that, simulation) {
         this.cam = simulation.cameras.main
         this.follow = 0
-        this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20})
+        this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20 })
 
         that.add.text(10, 10, '+', { color: '#000', backgroundColor: '#fff', padding: 1, fontSize: 40 })
             .setInteractive().on('pointerdown', () => {
                 this.cam.zoom *= 1.2,
-                that.echelle.scale *= 1.2
+                    that.echelle.scale *= 1.2
             },
 
                 that.add.text(10, 60, '-', { color: '#000', backgroundColor: '#fff', padding: 1, fontSize: 40 })
                     .setInteractive().on('pointerdown', () => {
                         this.cam.zoom /= 1.2,
-                        that.echelle.scale /= 1.2
+                            that.echelle.scale /= 1.2
                     }),
 
                 that.buttons.push(that.add.text(10, 110, 'Free', { color: '#000', backgroundColor: '#999', padding: 3 })
@@ -360,12 +355,13 @@ class Camera {
                     140 + 30 * i,
                     simulation.light[i].robot.state.id,
                     { color: '#000', backgroundColor: '#999', padding: 3 }
-                    )
-                .setInteractive().on('pointerdown', () => {
-                    this.follow = i,
-                    this.cursor.setPosition(
-                        15 + that.buttons[i + 1].width,
-                        140 + 30 * i) }))
+                )
+                    .setInteractive().on('pointerdown', () => {
+                        this.follow = i,
+                            this.cursor.setPosition(
+                                15 + that.buttons[i + 1].width,
+                                140 + 30 * i)
+                    }))
         }
 
         this.cursor.setPosition(15 + that.buttons[1].width, 140)

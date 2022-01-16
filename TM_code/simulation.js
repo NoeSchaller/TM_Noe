@@ -9,10 +9,8 @@ class Simul extends Phaser.Scene {
     preload() {
         let me = this
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", this.map);
-        xhr.addEventListener('load', processJSON);
-        xhr.send();
+        /* Le code suivant (jusqu'à xhr.send, ligne 42) provient en grande partie d'ici:
+        https://webmasters.stackexchange.com/questions/83344/getting-error-uncaught-syntaxerror-unexpected-token-on-json-file */
 
         function processJSON(event) {
             var json = this.responseText;
@@ -37,6 +35,11 @@ class Simul extends Phaser.Scene {
                 me.load.image(String(i), path)
             }
         }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", this.map);
+        xhr.addEventListener('load', processJSON);
+        xhr.send();
 
         this.load.json('ultraShape', 'assets/ultraShape.json')
         this.load.json('bodyShape', 'assets/bodyShape.json')
@@ -86,8 +89,6 @@ class Simul extends Phaser.Scene {
             let key = "(this, "
             eval(commande.replace("(", key))
         }
-
-        console.log(this.marks)
 
         this.scene.launch('overlay', this)
     };

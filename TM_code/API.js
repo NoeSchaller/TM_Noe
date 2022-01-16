@@ -55,32 +55,32 @@ class i2c {
                 0 = left or both
                 2 = right
     */
-    write(adresse, commande, byte) {
-        if (adresse == 16) {
-            if (commande == 0) {
-                if (byte[0] == 0) {
+    write(adresse, byte) {
+        if (adresse == 0x10) {
+            if (byte[0] == 0) {
+                if (byte[1] == 0) {
                     this.bot.state.wheel.left = 0
-                } else if (byte[0] == 1) {
-                    this.bot.state.wheel.left = byte[1]
-                } else if (byte[0] == 2) {
-                    this.bot.state.wheel.left = -byte[1]
+                } else if (byte[1] == 1) {
+                    this.bot.state.wheel.left = byte[2]
+                } else if (byte[1] == 2) {
+                    this.bot.state.wheel.left = -byte[2]
                 }
 
-                if (byte[2] == 0) {
+                if (byte[3] == 0) {
                     this.bot.state.wheel.right = 0
-                } else if (byte[2] == 1) {
-                    this.bot.state.wheel.right = byte[3]
-                } else if (byte[2] == 2) {
-                    this.bot.state.wheel.right = -byte[3]
+                } else if (byte[3] == 1) {
+                    this.bot.state.wheel.right = byte[4]
+                } else if (byte[3] == 2) {
+                    this.bot.state.wheel.right = -byte[4]
                 }
 
-            } else if (commande == 2) {
-                if (byte[0] == 0) {
+            } else if (byte[0] == 2) {
+                if (byte[1] == 0) {
                     this.bot.state.wheel.right = 0
-                } else if (byte[0] == 1) {
-                    this.bot.state.wheel.right = byte[1]
-                } else if (byte[0] == 2) {
-                    this.bot.state.wheel.right = -byte[1]
+                } else if (byte[1] == 1) {
+                    this.bot.state.wheel.right = byte[2]
+                } else if (byte[1] == 2) {
+                    this.bot.state.wheel.right = -byte[2]
                 }
             }
         }
