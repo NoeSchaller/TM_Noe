@@ -9,6 +9,6 @@ Pour lancer ce travail il existe le fichier index.html, toutefois simplement ouv
 ---
 class: warning
 ---
-Pour l'instant la vitesse des moteurs n'est pas encore ajuster, une valeure supérieure et il n'est généralement pas nécéssaire d'introduire une valeure excédant 5  
+Pour l'instant la vitesse des moteurs n'est pas encore ajuster, une valeure supérieure et il n'est généralement pas nécéssaire d'introduire une valeure excédant 5.  
 De plus, pour des raisons pratique il est actuellement possible de déplacer le premier robot de la liste à l'aide de la souris, cela ne sera bien évidemment plus le cas dans la version finale du travail
 ```
