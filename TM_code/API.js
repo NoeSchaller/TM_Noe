@@ -1,11 +1,12 @@
 class simulation {
-    constructor(width, height, map, background = 0xcccac0) {
-        this.Light = ''
+    constructor(width, height, id, map, background = 0xcccac0) {
+        this.Light
         this.game = new Phaser.Game({
             width: width,
             height: height,
             backgroundColor: background,
-            type: Phaser.AUTO,
+            type: Phaser.CANVAS,
+            canvas: document.getElementById(id),
             scene: [new Simul(this, map), Over],
             physics: {
                 default: 'matter',
