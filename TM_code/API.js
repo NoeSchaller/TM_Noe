@@ -1,5 +1,5 @@
 class simulation {
-    constructor(width, height, id, map, background = 0xcccac0) {
+    constructor(width, height, id, map, background = 0xcccac0, mode = 0) {
         this.Light
         this.game = new Phaser.Game({
             width: width,
@@ -7,7 +7,7 @@ class simulation {
             backgroundColor: background,
             type: Phaser.CANVAS,
             canvas: document.getElementById(id),
-            scene: [new Simul(this, map), Over],
+            scene: [new Simul(this, map, mode), new Setup(width, height), new Over(width, height)],
             physics: {
                 default: 'matter',
                 matter: {
@@ -30,7 +30,7 @@ class simulation {
 
 class botLight {
     constructor(that, name, x, y, angle) {
-        this.robot = new robot(that, name, x, y, angle)
+        this.robot = new robotL(that, name, x, y, angle)
         this.i2c = new i2c(this.robot)
         this.pin13 = new pin(this.robot, 'irLeft')//irLeft
         this.pin14 = new pin(this.robot, 'irRight') // irRight

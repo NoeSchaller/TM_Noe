@@ -1,1 +1,1 @@
-sim = new simulation(600,600, 'game', 'map.json')
+sim = new simulation(600,600, 'game', 'map.json', 0xcccac0, 1)

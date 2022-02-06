@@ -9,6 +9,6 @@
         "new markRect(400, 500, 100, 100)"
     ],
     "pictures": [
-        "new Picture(400, 100, 'assets/Logo_csud.png')"
+        "new Picture(400, 100, 45, 'assets/Logo_csud.png')"
     ]
 }

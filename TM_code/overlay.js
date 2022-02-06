@@ -1,7 +1,9 @@
 class Over extends Phaser.Scene {
 
-    constructor() {
+    constructor(width, height) {
         super('overlay');
+        this.height = height
+        this.width = width
     }
 
     init(data) {
@@ -13,7 +15,7 @@ class Over extends Phaser.Scene {
     }
 
     create() {
-        this.echelle = this.add.image(100, 770, 'echelle')
+        this.echelle = this.add.image(70, this.height - 30, 'echelle')
         this.buttons = []
 
         this.camera = new Camera(this, this.simulation)

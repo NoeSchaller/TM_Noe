@@ -1,20 +1,21 @@
 class Simul extends Phaser.Scene {
 
-    constructor(that, map) {
+    constructor(that, map, mode) {
         super('simulation');
         this.map = map
         this.parent = that
+        this.mode = mode
     }
 
     preload() {
         let me = this
 
         /* Le code suivant (jusqu'à xhr.send, ligne 42) provient en grande partie d'ici:
-        https://webmasters.stackexchange.com/questions/83344/getting-error-uncaught-syntaxerror-unexpected-token-on-json-file */
+        https://webmasters.stackexchange.com/questions/83344/getting-error-uncaught-syntaxerror-unexpected-token-on-json-file *
 
         function processJSON(event) {
-            var json = this.responseText;
-            var pic = JSON.parse(json).pictures;
+            const json = this.responseText;
+            const pic = JSON.parse(json).pictures;
             for (let i = 0; i < pic.length; i++) {
                 let isKey = false
                 let path = ''
@@ -35,15 +36,18 @@ class Simul extends Phaser.Scene {
                 me.load.image(String(i), path)
             }
         }
+        
 
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.open("GET", this.map);
         xhr.addEventListener('load', processJSON);
         xhr.send();
+        */
+        
 
         this.load.json('ultraShape', 'assets/ultraShape.json')
         this.load.json('bodyShape', 'assets/bodyShape.json')
-        this.load.json('map', this.map)
+        //this.load.json('map', this.map)
 
         this.load.spritesheet('bodyPic', 'assets/body.png', { frameWidth: 200, frameHeight: 200 })
         this.load.spritesheet('ultra', 'assets/ultra.png', { frameWidth: 200, frameHeight: 200 })
@@ -56,7 +60,7 @@ class Simul extends Phaser.Scene {
     };
 
     create() {
-        this.setup = this.cache.json.get('map')
+        //this.setup = this.cache.json.get('map')
         this.frame = 0
         this.light = []
         this.parent.Light = this.light
@@ -64,8 +68,9 @@ class Simul extends Phaser.Scene {
         this.walls = []
 
 
-        this.matter.add.mouseSpring(this.light);
+        this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
 
+        /*
         for (let i = 0; i < this.cache.json.get('map').pictures.length; i++) {
             let commande = this.cache.json.get('map').pictures[i]
             let key = "(this, ".concat(String(i)).concat(", ")
@@ -89,8 +94,16 @@ class Simul extends Phaser.Scene {
             let key = "(this, "
             eval(commande.replace("(", key))
         }
+        */
 
-        this.scene.launch('overlay', this)
+
+
+        
+        if (this.mode) {
+            this.scene.launch('setup', this)
+        } else {
+            this.scene.launch('overlay', this)
+        }
     };
 
     update() {
