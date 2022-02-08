@@ -1,5 +1,5 @@
 class simulation {
-    constructor(width, height, id, map, background = 0xcccac0, mode = 0) {
+    constructor(width, height, id, mapLoad, mapCreate, background = 0xcccac0, mode = 0) {
         this.Light
         this.game = new Phaser.Game({
             width: width,
@@ -7,7 +7,7 @@ class simulation {
             backgroundColor: background,
             type: Phaser.CANVAS,
             canvas: document.getElementById(id),
-            scene: [new Simul(this, map, mode), new Setup(width, height), new Over(width, height)],
+            scene: [new Simul(this, mapLoad, mapCreate, mode), new Setup(width, height), new Over(width, height)],
             physics: {
                 default: 'matter',
                 matter: {

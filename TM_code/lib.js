@@ -180,6 +180,9 @@ class robotL {
         for (let i = 0; i < that.marks.length; i++) {
 
             if (that.matter.overlap(this.irL, that.marks[i].body)) {
+                if (that.marks[i].pic == 'geom') {
+                    return true
+                }
                 const color = that.textures.getPixel(
                     (this.irL.x - that.marks[i].pos.x + that.marks[i].body.width * that.marks[i].scale.x / 2) / that.marks[i].scale.x,
                     (this.irL.y - that.marks[i].pos.y + that.marks[i].body.width * that.marks[i].scale.y / 2) / that.marks[i].scale.y,
@@ -200,6 +203,9 @@ class robotL {
     SeeIrR(that) {
         for (let i = 0; i < that.marks.length; i++) {
             if (that.matter.overlap(this.irR, that.marks[i].body)) {
+                if (that.marks[i].pic == 'geom') {
+                    return true
+                }
                 const color = that.textures.getPixel(
                     (this.irR.x - that.marks[i].pos.x + that.marks[i].body.width * that.marks[i].scale.x / 2
                     ) / that.marks[i].scale.x,
@@ -269,17 +275,22 @@ class robotL {
 
 
 class wallRect {
-    constructor(that, x, y, width, heigth) {
+    constructor(that, x, y, width, heigth, angle = 0) {
         this.body = that.matter.add.gameObject(
-            that.add.rectangle(
-                x,
-                y,
-                width,
-                heigth,
-                0xff00000)
+            that.add.rectangle(x, y, width, heigth, 0xff00000))
+            .setStatic(true)
+            .setAngle(angle)
+
+        that.walls.push(this.body)
+    }
+}
+
+class wallCircle {
+    constructor(that, x, y, radius) {
+        this.body = that.matter.add.gameObject(
+            that.add.circle(x, y, radius, 0xff0000)
         )
             .setStatic(true)
-            .setAngle(45)
 
         that.walls.push(this.body)
     }
@@ -287,20 +298,32 @@ class wallRect {
 
 class markRect {
     constructor(that, x, y, width, height, angle = 0) {
-        this.pic = 'mark'
-        this.pos = { x: x, y: y }
-        this.scale = { x: width * 20, y: height * 20 }
-        this.body = that.matter.add.image(y, x, 'mark')
-            .setScale(width, height)
+        this.pic = 'geom'
+        this.body = that.matter.add.gameObject(
+            that.add.rectangle(x, y, width, height, 0x000000))
             .setCollidesWith(0)
             .setAngle(angle)
 
         that.marks.push(this)
     }
 }
+
+class markCircle {
+    constructor(that, x, y, radius) {
+        this.pic = 'geom'
+        this.body = that.matter.add.gameObject(
+            that.add.circle(x, y, radius, 0x000000))
+            .setCollidesWith(0)
+
+        console.log(that)
+
+        that.marks.push(this)
+    }
+}
+
 class Picture {
-    constructor(that, key, x, y, angle) {
-        this.pic = String(key)
+    constructor(that, key, x, y, angle = 0) {
+        this.pic = key
         this.pos = { x: x, y: y }
         this.scale = { x: 1, y: 1 }
         this.body = that.matter.add.image(x, y, key)
@@ -346,37 +369,35 @@ class Camera {
                     that.echelle.scale *= 1.2
             })
 
-        if (seeBot) {
-            that.buttons.push(that.add.text(10, 110, 'Free', { color: '#000', backgroundColor: '#999', padding: 3 })
-                .setInteractive().on('pointerdown', () => {
-                    this.follow = -1, this.cursor.setPosition(15 + that.buttons[0].width, 110), this.cam.stopFollow()
-                }))
+        that.buttonsCam.push(that.add.text(10, 110, 'Free', { color: '#000', backgroundColor: '#999', padding: 3 })
+            .setInteractive().on('pointerdown', () => {
+                this.follow = -1, this.cursor.setPosition(15 + that.buttonsCam[0].width, 110), this.cam.stopFollow()
+            }))
 
-            this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20 })
-
+        this.cursor = that.add.text(0, 0, '<=', { color: '#000', fontSize: 20 })
 
 
-            for (let i = 0; i < simulation.light.length; i++) {
-                that.buttons.push(
-                    that.add.text(
-                        10,
-                        140 + 30 * i,
-                        simulation.light[i].robot.state.id,
-                        { color: '#000', backgroundColor: '#999', padding: 3 }
-                    )
-                        .setInteractive().on('pointerdown', () => {
-                            this.follow = i,
-                                this.cursor.setPosition(
-                                    15 + that.buttons[i + 1].width,
-                                    140 + 30 * i)
-                        }))
-            }
 
-
-            this.cursor.setPosition(15 + that.buttons[1].width, 140)
-
-            this.follow = 0
+        for (let i = 0; i < simulation.light.length; i++) {
+            that.buttonsCam.push(
+                that.add.text(
+                    10,
+                    140 + 30 * i,
+                    simulation.light[i].robot.state.id,
+                    { color: '#000', backgroundColor: '#999', padding: 3 }
+                )
+                    .setInteractive().on('pointerdown', () => {
+                        this.follow = i,
+                            this.cursor.setPosition(
+                                15 + that.buttonsCam[i + 1].width,
+                                140 + 30 * i)
+                    }))
         }
+
+
+        this.cursor.setPosition(15 + that.buttonsCam[0].width, 113)
+
+        this.follow = -1
     };
 
     update(sim) {

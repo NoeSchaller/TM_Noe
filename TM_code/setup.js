@@ -16,13 +16,13 @@ class Setup extends Phaser.Scene {
 
     create() {
         this.echelle = this.add.image(70, this.height - 30, 'echelle')
-        this.camera = new Camera(this, this.simulation, 0)
 
-        this.now = 0
-
+        this.mapjs = ''
         this.mouse = this.input.mousePointer
         this.lastForm
         this.print = false
+        this.cancel = false
+        this.now = 0
 
         this.buttons = []
 
@@ -66,59 +66,85 @@ class Setup extends Phaser.Scene {
     }
 
     update() {
-        this.camera.update(this.simulation)
+        let inputs = this.input.keyboard.addKeys({
+            space: 'space'
+        });
+
+        if (inputs.space.isDown) { this.cancel = true }
 
         if (this.mouse.isDown && this.mouse.downX < this.width - 80) {
             if (this.lastForm !== undefined) {
                 this.lastForm.destroy()
             }
-            if (this.print == false) {
-                this.mouse.worldDownX = this.mouse.worldX
-                this.mouse.worldDownY = this.mouse.worldY
+            if (!this.cancel) {
+                if (this.print == false) {
+                    this.mouse.worldDownX = this.mouse.worldX
+                    this.mouse.worldDownY = this.mouse.worldY
+                }
+
+                this.deltaX = this.mouse.worldX - this.mouse.worldDownX
+                this.deltaY = this.mouse.worldY - this.mouse.worldDownY
+
+                if (this.now == 0) {
+                    this.centerX = this.mouse.worldDownX + this.deltaX / 2
+                    this.centerY = this.mouse.worldDownY + this.deltaY / 2
+
+                    this.lastForm = this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0xff0000, 0.2)
+
+                    this.toPrint = "new wallRect(this.simulation, this.centerX, this.centerY, this.deltaX, this.deltaY)"
+
+                    this.toAdd = "new wallRect(scene, "+ String(this.centerX) +"," + String(this.centerY) +"," + String(this.deltaX) + "," + String(this.deltaY) +")"
+                }
+
+                if (this.now == 1) {
+                    this.radius = Math.sqrt(this.deltaX ** 2 + this.deltaY ** 2)
+
+                    this.lastForm = this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0xff0000, 0.2)
+
+                    this.toPrint = "new wallCircle(this.simulation, this.mouse.worldDownX, this.mouse.worldDownY, this.radius)"
+
+                    this.toAdd = "new wallCircle(scene, " + String(this.mouse.worldDownX) + "," + String(this.mouse.worldDownY) + "," + String(this.radius) + ")"
+                }
+
+                if (this.now == 2) {
+                    this.centerX = this.mouse.worldDownX + this.deltaX / 2
+                    this.centerY = this.mouse.worldDownY + this.deltaY / 2
+
+                    this.lastForm = this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0x000000, 0.5)
+
+                    this.toPrint = "new markRect(this.simulation, this.centerX, this.centerY, this.deltaX, this.deltaY)"
+
+                    this.toAdd = "new markRect(scene, " + String(this.centerX) + "," + String(this.centerY) + "," + String(this.deltaX) + "," + String(this.deltaY) + ")"
+                }
+
+
+                if (this.now == 3) {
+                    this.radius = Math.sqrt(this.deltaX ** 2 + this.deltaY ** 2)
+
+                    this.lastForm = this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0x555555, 0.5)
+
+                    this.toPrint = "new markCircle(this.simulation, this.mouse.worldDownX, this.mouse.worldDownY, this.radius)"
+                    this.toAdd = "new markCircle(scene, " + String(this.mouse.worldDownX) + "," + String(this.mouse.worldDownY) + "," + String(this.radius) + ")"
+                }
+                this.print = true
+            } else {
+                this.print = false
             }
-
-            this.deltaX = this.mouse.worldX - this.mouse.worldDownX
-            this.deltaY = this.mouse.worldY - this.mouse.worldDownY
-
-            if (this.now == 0) {
-                this.centerX = this.mouse.worldDownX + this.deltaX/2
-                this.centerY = this.mouse.worldDownY + this.deltaY/2
-
-                this.lastForm = this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0xff0000, 0.2)
-
-                this.toPrint = "this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0xff0000)"
-            }
-
-            if (this.now == 1) {
-                this.radius = Math.sqrt(this.deltaX ** 2 + this.deltaY ** 2)
-
-                this.lastForm = this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0xff0000, 0.2)
-
-                this.toPrint = "this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0xff0000)"
-            }
-
-            if (this.now == 2) {
-                this.centerX = this.mouse.worldDownX + this.deltaX/2
-                this.centerY = this.mouse.worldDownY + this.deltaY/2
-
-                this.lastForm = this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0x000000, 0.5)
-
-                this.toPrint = "this.simulation.add.rectangle(this.centerX, this.centerY, this.deltaX, this.deltaY, 0x000000)"
-            }
-
-
-            if (this.now == 3) {
-                this.radius = Math.sqrt(this.deltaX ** 2 + this.deltaY ** 2)
-
-                this.lastForm = this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0x555555, 0.5)
-
-                this.toPrint = "this.simulation.add.circle(this.mouse.worldDownX, this.mouse.worldDownY, this.radius, 0x000000)"
-            }
-            this.print = true
+        } else {
+            this.cancel = false
         }
-        if (this.print && !this.mouse.isDown) {
+        
+        if (this.print && !this.mouse.isDown && !this.cancel) {
             eval(this.toPrint)
+            this.mapjs += this.toAdd
+            this.mapjs += "\n"
+            console.log(this.mapjs)
             this.print = false
+        }
+
+
+        if (this.now == 0) {
+
         }
     }
 }
