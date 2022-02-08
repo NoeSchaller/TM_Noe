@@ -5,7 +5,7 @@ class simulation {
             width: width,
             height: height,
             backgroundColor: background,
-            type: Phaser.CANVAS,
+            type: Phaser.WEBGL,
             canvas: document.getElementById(id),
             scene: [new Simul(this, mapLoad, mapCreate, mode), new Setup(width, height), new Over(width, height)],
             physics: {
