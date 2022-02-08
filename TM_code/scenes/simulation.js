@@ -28,8 +28,6 @@ class Simul extends Phaser.Scene {
 
     create() {
         this.frame = 0
-        this.light = []
-        this.parent.Light = this.light
         this.marks = []
         this.walls = []
 
@@ -46,8 +44,8 @@ class Simul extends Phaser.Scene {
     };
 
     update() {
-        for (let i = 0; i < this.light.length; i++) {
-            this.light[i].robot.update(this)
+        for (let i = 0; i < this.parent.lite.length; i++) {
+            this.parent.lite[i].robot.update(this)
         }
         this.frame++
     };
