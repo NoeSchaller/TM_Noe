@@ -60,13 +60,17 @@ class pin {
 }
 
 class ultrasonicD {
-  constructor(scene, reference, x, y, angle = 60, range = 255) {
+  constructor(scene, reference, x, y, angle = 0, range = 255, coneAngle = 60) {
     this.reference = reference;
     this.scene = scene;
     this.range = range;
-    this.position = { x: x, y: y };
+    this.angle = angle/180*Math.PI
     this.delta = Math.sqrt(x ** 2 + y ** 2);
-    this.relAngle = Math.atan(y / x);
+    if (x >= 0) {
+      this.relAngle = Math.atan(y / x);
+    } else {
+      this.relAngle = Math.PI + Math.atan(y / x);
+    }
 
     this.raycaster = scene.raycasterPlugin.createRaycaster();
     this.raycaster.mapGameObjects(scene.walls);
@@ -79,8 +83,8 @@ class ultrasonicD {
         autoSlice: true,
         collisionRange: range * 10,
       })
-      .setConeDeg(angle)
-      .setAngle(reference.rotation - Math.PI / 2);
+      .setConeDeg(coneAngle)
+      .setAngle(reference.rotation + Math.PI / 2 + this.angle);
 
     this.rayCone.enablePhysics("matter");
 
@@ -115,17 +119,18 @@ class ultrasonicD {
         this.reference.y +
           this.delta * Math.sin(this.reference.rotation + this.relAngle)
       )
-      .setAngle(this.reference.rotation - Math.PI / 2);
+      .setAngle(
+        this.reference.rotation - Math.PI / 2 + this.angle
+      );
   }
 }
 
 class infra {
   constructor(scene, reference, x, y, radius) {
-    this.scene = scene
+    this.scene = scene;
     this.reference = reference;
-    this.position = { x: x, y: y };
     this.delta = Math.sqrt(x ** 2 + y ** 2);
-    if(x > 0){
+    if (x >= 0) {
       this.relAngle = Math.atan(y / x);
     } else {
       this.relAngle = Math.PI + Math.atan(y / x);
@@ -139,9 +144,8 @@ class infra {
       .setCollidesWith(0)
       .setDepth(2);
 
-      this.isMarked = function(){
-  
-        for (let i = 0; i < this.scene.marks.length; i++) {
+    this.isMarked = function () {
+      for (let i = 0; i < this.scene.marks.length; i++) {
         if (this.scene.matter.overlap(this.ir, this.scene.marks[i].body)) {
           if (this.scene.marks[i].pic == "geom") {
             return true;
@@ -167,7 +171,8 @@ class infra {
           }
         }
       }
-      return false;}
+      return false;
+    };
   }
 
   update() {
@@ -178,13 +183,52 @@ class infra {
         this.delta * Math.sin(this.reference.rotation + this.relAngle)
     );
 
-    if(this.isMarked()){
-      this.ir.fillColor = 0xffffff
-      this.see = true
-    }else{
-      this.ir.fillColor = 0x404040
-      this.see = false
+    if (this.isMarked()) {
+      this.ir.fillColor = 0xffffff;
+      this.see = true;
+    } else {
+      this.ir.fillColor = 0x404040;
+      this.see = false;
     }
-    return this.see
+    return this.see;
+  }
+}
+
+class led {
+  constructor(scene, reference, x, y, radius) {
+    this.reference = reference;
+    this.delta = Math.sqrt(x ** 2 + y ** 2);
+    if (x >= 0) {
+      this.relAngle = Math.atan(y / x);
+    } else {
+      this.relAngle = Math.PI + Math.atan(y / x);
+    }
+
+    this.led = scene.add
+      .circle(reference.x + x, reference.y + y, radius, 0xff0000)
+      .setDepth(2);
+  }
+
+  update(toCheck) {
+    this.led.setPosition(
+      this.reference.x +
+        this.delta * Math.cos(this.reference.rotation + this.relAngle),
+      this.reference.y +
+        this.delta * Math.sin(this.reference.rotation + this.relAngle)
+    );
+
+    if (toCheck) {
+      this.led.fillColor = 0xff0000;
+    } else {
+      this.led.fillColor = 0x500000;
+    }
+  }
+}
+
+class motor{
+  constructor(scene, reference, x, y, width, height, pointA, pointB, angle = 0){
+
+    //this.wheel = scene
+    
   }
 }
