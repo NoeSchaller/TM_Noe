@@ -1,7 +1,8 @@
 class Over extends Phaser.Scene {
 
-    constructor(width, height) {
+    constructor(parent, width, height) {
         super('overlay');
+        this.parent = parent
         this.height = height
         this.width = width
     }
@@ -22,6 +23,6 @@ class Over extends Phaser.Scene {
     }
 
     update() {
-        this.camera.update(this.simulation)
+        this.camera.update(this.parent, this)
     }
 }

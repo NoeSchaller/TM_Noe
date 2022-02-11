@@ -47,7 +47,7 @@ class CameraManager {
     for (let i = 0; i < simulation.parent.lite.length; i++) {
       that.buttonsCam.push(
         that.add
-          .text(10, 140 + 30 * i, simulation.parent.lite[i].robot.state.id, {
+          .text(10, 140 + 30 * i, simulation.parent.lite[i].robot.id, {
             color: "#000",
             backgroundColor: "#999",
             padding: 3,
@@ -65,11 +65,11 @@ class CameraManager {
 
     this.cursor.setPosition(15 + that.buttonsCam[0].width, 113);
 
-    this.follow = -1;
+    this.follow = 0;
   }
 
-  update(sim) {
-    let inputs = sim.input.keyboard.addKeys({
+  update(simulation, scene) {
+    let inputs = scene.input.keyboard.addKeys({
       up: "up",
       down: "down",
       left: "left",
@@ -89,7 +89,7 @@ class CameraManager {
         this.cam.scrollX += 5;
       }
     } else {
-      this.cam.startFollow(sim.light[this.follow].robot.body);
+      this.cam.startFollow(simulation.lite[this.follow].robot.body);
     }
   }
 }

@@ -7,12 +7,12 @@ class simulation {
             backgroundColor: background,
             type: Phaser.WEBGL,
             canvas: document.getElementById(id),
-            scene: [new Simul(this, mapLoad, mapCreate, mode), new Setup(width, height), new Over(width, height)],
+            scene: [new Simul(this, mapLoad, mapCreate, mode), new Setup(width, height), new Over(this, width, height)],
             physics: {
                 default: 'matter',
                 matter: {
                     gravity: { y: 0, x: 0 },
-                    debug: 1
+                    debug: 0
                 }
             },
             plugins: {
