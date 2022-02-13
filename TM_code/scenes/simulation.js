@@ -8,21 +8,18 @@ class Simul extends Phaser.Scene {
   }
 
   preload() {
-    this.load.json("bodyShape", "assets/bodyShape.json");
+    this.load.json("liteShape", "assets/liteShape.json");
+    this.load.json("plusShape", "assets/plusShape.json");
 
-    this.load.spritesheet("bodyPic", "assets/body.png", {
-      frameWidth: 200,
-      frameHeight: 200,
+    this.load.spritesheet("liteBodyPic", "assets/liteBody.png", {
+      frameWidth: 80,
+      frameHeight: 80,
     });
-    this.load.spritesheet("ultra", "assets/ultra.png", {
-      frameWidth: 200,
-      frameHeight: 200,
+    this.load.spritesheet("plusBodyPic", "assets/plusBody.png", {
+      frameWidth: 100,
+      frameHeight: 103,
     });
-
-    this.load.image("back", "assets/back.jpg");
-    this.load.image("wheel", "assets/wheel.png");
-    this.load.image("wall", "assets/wall.png");
-    this.load.image("mark", "assets/mark.png");
+    
     this.load.image("echelle", "assets/scale.png");
 
     this.mapLoad(this);
@@ -44,8 +41,8 @@ class Simul extends Phaser.Scene {
   }
 
   update() {
-    for (let i = 0; i < this.parent.lite.length; i++) {
-      this.parent.lite[i].robot.update(this);
+    for (let i = 0; i < this.parent.robots.length; i++) {
+      this.parent.robots[i].update();
     }
     this.frame++;
   }

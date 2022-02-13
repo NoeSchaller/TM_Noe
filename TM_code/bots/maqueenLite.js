@@ -1,40 +1,18 @@
 class maqueenLite {
-  constructor(that, name, x, y, angle = 0) {
-    this.robot = new bodyLite(that, name, x, y, angle);
-    this.i2c = new i2c(this.robot);
-    this.pin13 = new pin(this.robot, "this.robot.irL.isMarked()"); //irLeft
-    this.pin14 = new pin(this.robot, "this.robot.irR.isMarked()"); // irRight
-    this.pin8 = new pin(
-      this.robot,
-      "this.robot.LLed.getOn()",
-      "this.robot.LLed.setOn()"
-    ); //LLed
-    this.pin12 = new pin(
-      this.robot,
-      "this.robot.RLed.getOn()",
-      "this.robot.RLed.setOn()"
-    ); // RLed
-    this.pin1; // ultrason
-
-    that.parent.lite.push(this);
-  }
-}
-
-class bodyLite {
-  constructor(scene, id, x, y, angle) {
+  constructor(scene, name, x, y, angle) {
     //mise  en place de variable utilisables plus tard
     this.scale = 0.4;
-    this.id = id;
+    this.name = name;
 
     //mise en place du "corps" du robot
     this.body = scene.matter.add
-      .sprite(x, y, "bodyPic", "", {
-        shape: scene.cache.json.get("bodyShape").body,
+      .sprite(x, y, "liteBodyPic", undefined, {
+        shape: scene.cache.json.get("liteShape").body,
       })
       .setFrictionAir(0)
-      .setScale(this.scale)
       .setAngle(angle);
 
+    //mise en place des moteurs
     this.Lmotor = new motor(
       scene,
       this.body,
@@ -60,29 +38,47 @@ class bodyLite {
     );
 
     //mise en place du capteur ultrason
-
     this.ultrasonic = new ultrasonicD(scene, this.body, 0, -35);
 
     //mise en place des capteurs infrarouges
-
     this.irL = new infra(scene, this.body, -18 * this.scale, -40 * this.scale);
 
     this.irR = new infra(scene, this.body, 18 * this.scale, -40 * this.scale);
 
     //mise en place des leds
-
     this.LLed = new led(scene, this.body, -45 * this.scale, -80 * this.scale);
 
     this.RLed = new led(scene, this.body, 45 * this.scale, -80 * this.scale);
+
+    // mise en place des pins
+    this.pin13 = new pin(this, "this.robot.irL.isMarked()"); //irLeft
+    this.pin14 = new pin(this, "this.robot.irR.isMarked()"); // irRight
+    this.pin8 = new pin(
+      this,
+      "this.robot.LLed.getOn()",
+      "this.robot.LLed.setOn()"
+    ); //LLed
+    this.pin12 = new pin(
+      this,
+      "thid.robot.RLed.getOn()",
+      "thid.robot.RLed.setOn()"
+    ); // RLed
+    this.pin1; // ultrason
+
+    // mise en place de l'i2c
+    this.i2c = new i2c(this);
+
+    // ajout du robot à la liste des robots
+    scene.parent.robots.push(this);
   }
 
   update() {
-    this.LLed.update();
-    this.RLed.update();
+    this.Lmotor.update();
+    this.Rmotor.update();
     this.ultrasonic.update();
     this.irL.update();
     this.irR.update();
-    this.Rmotor.update();
-    this.Lmotor.update();
+    this.LLed.update();
+    this.RLed.update();
   }
 }

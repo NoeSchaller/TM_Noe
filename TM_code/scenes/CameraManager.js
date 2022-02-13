@@ -44,10 +44,10 @@ class CameraManager {
 
     this.cursor = that.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
 
-    for (let i = 0; i < simulation.parent.lite.length; i++) {
+    for (let i = 0; i < simulation.parent.robots.length; i++) {
       that.buttonsCam.push(
         that.add
-          .text(10, 140 + 30 * i, simulation.parent.lite[i].robot.id, {
+          .text(10, 140 + 30 * i, simulation.parent.robots[i].name, {
             color: "#000",
             backgroundColor: "#999",
             padding: 3,
@@ -65,7 +65,7 @@ class CameraManager {
 
     this.cursor.setPosition(15 + that.buttonsCam[0].width, 113);
 
-    this.follow = 0;
+    this.follow = -1;
   }
 
   update(simulation, scene) {
@@ -89,7 +89,7 @@ class CameraManager {
         this.cam.scrollX += 5;
       }
     } else {
-      this.cam.startFollow(simulation.lite[this.follow].robot.body);
+      this.cam.startFollow(simulation.robots[this.follow].body);
     }
   }
 }

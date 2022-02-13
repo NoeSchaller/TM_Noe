@@ -228,7 +228,7 @@ class led {
 }
 
 class rgbLed {
-  constructor(scene, reference, x, y, radius = 6) {
+  constructor(scene, reference, x, y, radius = 5) {
     this.reference = reference;
     this.delta = Math.sqrt(x ** 2 + y ** 2);
     if (x >= 0) {
