@@ -41,14 +41,14 @@ class maqueenLite {
     this.ultrasonic = new ultrasonicD(scene, this.body, 0, -35);
 
     //mise en place des capteurs infrarouges
-    this.irL = new infra(scene, this.body, -18 * this.scale, -40 * this.scale);
+    this.irL = new infra(scene, this.body, -7, -16);
 
-    this.irR = new infra(scene, this.body, 18 * this.scale, -40 * this.scale);
+    this.irR = new infra(scene, this.body, 7, -16);
 
     //mise en place des leds
-    this.LLed = new led(scene, this.body, -45 * this.scale, -80 * this.scale);
+    this.LLed = new led(scene, this.body, -18, -32);
 
-    this.RLed = new led(scene, this.body, 45 * this.scale, -80 * this.scale);
+    this.RLed = new led(scene, this.body, 18, -32);
 
     // mise en place des pins
     this.pin13 = new pin(this, "this.robot.irL.isMarked()"); //irLeft

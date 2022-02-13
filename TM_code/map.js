@@ -9,5 +9,7 @@ function mapCreate(scene) {
 
   new markRect(scene, 400, 500, 100, 100);
 
-  new maqueenPlus(scene, "N°1", 300, 300, 50);
+  new maqueenPlus(scene, "N°1", 300, 300, 0);
+
+  new maqueenLite(scene, "N°2", 400, 300, 0);
 }

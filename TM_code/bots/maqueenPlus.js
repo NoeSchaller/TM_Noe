@@ -20,8 +20,8 @@ class maqueenPlus {
       27,
       9,
       43,
-      { x: -10, y: 3 },
-      { x: -10, y: 47 }
+      { x: -10, y: 5 },
+      { x: -10, y: 49 }
     );
 
     this.Rmotor = new motor(
@@ -32,8 +32,8 @@ class maqueenPlus {
       27,
       9,
       43,
-      { x: 10, y: 3 },
-      { x: 10, y: 47 }
+      { x: 10, y: 5 },
+      { x: 10, y: 49 }
     );
 
     //mise en place du capteur ultrason

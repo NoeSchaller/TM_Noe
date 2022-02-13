@@ -303,14 +303,14 @@ class motor {
       .gameObject(
         scene.add.rectangle(
           reference.x + delta * Math.cos(this.startAngle),
-          reference.x + delta * Math.sin(this.startAngle),
+          reference.y + delta * Math.sin(this.startAngle),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
           reference.x + delta * Math.cos(this.startAngle),
-          reference.x + delta * Math.sin(this.startAngle),
+          reference.y + delta * Math.sin(this.startAngle),
           width,
           height
         )
