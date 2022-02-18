@@ -1,4 +1,5 @@
 echelle : 100px = 10cm
+setVelocityX(x) => x*3/5 cm/s
 
 - faire des dossier par thème
 - simuler microbit (micropyhton microbit) (matrice, bouttons, accelerometre)

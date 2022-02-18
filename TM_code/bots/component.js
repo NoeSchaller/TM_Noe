@@ -1,41 +1,85 @@
-class i2c {
+class i2cPlus {
+  constructor(bot) {
+    this.bot = bot;
+    this.colors = [
+      0xff0000, 0x00ff00, 0xffff00, 0x0000ff, 0xff00ff, 0x00ffff, 0xffffff,
+      0x808080,
+    ];
+  }
+
+  write(adresse, byte) {
+    if (adresse == 0x10) {
+      const register = byte[0];
+
+      //gestion des moteur
+      if (register == 0x00) {
+        if (byte.length == 3) {
+          const dirL = byte[1],
+            pL = byte[2];
+          this.bot.Lmotor.setSpeed(dirL, pL);
+        } else if (byte.length == 5) {
+          const dirL = byte[1],
+            pL = byte[2],
+            dirR = byte[3],
+            pR = byte[4];
+          this.bot.Lmotor.setSpeed(dirL, pL);
+          this.bot.Rmotor.setSpeed(dirR, pR);
+        }
+      } else if (register == 0x02) {
+        const dirR = byte[1],
+          pR = byte[2];
+          console.log(pR)
+        this.bot.Rmotor.setSpeed(dirR, pR);
+      }
+
+      //gestion des leds rgb
+      else if (register == 0x0b) {
+        if (byte.length == 3) {
+          const colorL = this.colors[byte[1] - 1],
+            colorR = this.colors[byte[2] - 1];
+
+          this.bot.LLed.setColor(colorL);
+          this.bot.RLed.setColor(colorR);
+        } else if (byte.length == 2) {
+          const colorL = this.colors[byte[1] - 1];
+
+          this.bot.LLed.setColor(colorL);
+        }
+      } else if (register == 0x0c) {
+        const colorR = this.colors[byte[1] - 1];
+
+        this.bot.RLed.setColor(colorR);
+      }
+    }
+  }
+
+  read(adresse, nb) {
+    if (adresse == 0x10) {
+      let get = [0] * nb;
+
+      for (let i = 0; i < nb; i++) {
+        get[i] = this.buffer[i];
+      }
+      return get;
+    }
+  }
+}
+
+class i2cLite {
   constructor(bot) {
     this.bot = bot;
   }
 
-  /*
-    adresse:
-        0x10 = moteur
-            commande
-                0 = left or both
-                2 = right
-    */
   write(adresse, byte) {
     if (adresse == 0x10) {
-      if (byte[0] == 0) {
-        if (byte[1] == 0) {
-          this.bot.Lmotor.setSpeed(0)
-        } else if (byte[1] == 1) {
-          this.bot.Lmotor.setSpeed(byte[2]);
-        } else if (byte[1] == 2) {
-          this.bot.Lmotor.setSpeed(-byte[2]);
-        }
+      if (byte[0] == 0x00) {
+        this.bot.Lmotor.setSpeed(byte[1], byte[2]);
 
-        if (byte[3] == 0) {
-          this.bot.Rmotor.setSpeed(0);
-        } else if (byte[3] == 1) {
-          this.bot.Rmotor.setSpeed(byte[4]);
-        } else if (byte[3] == 2) {
-          this.bot.Rmotor.setSpeed(-byte[4]);
+        if (byte.length > 3) {
+          this.bot.Rmotor.setSpeed(byte[3], byte[4]);
         }
-      } else if (byte[0] == 2) {
-        if (byte[1] == 0) {
-          this.bot.Rmotor.setSpeed(0);
-        } else if (byte[1] == 1) {
-          this.bot.Rmotor.setSpeed(byte[2]);
-        } else if (byte[1] == 2) {
-          this.bot.Rmotor.setSpeed(-byte[2]);
-        }
+      } else if (byte[0] == 0x02) {
+        this.bot.Rmotor.setSpeed(byte[1], byte[2]);
       }
     }
   }
@@ -238,7 +282,7 @@ class rgbLed {
     }
 
     this.rgb = scene.add
-      .circle(reference.x + x, reference.y + y, radius, 0xffffff)
+      .circle(reference.x + x, reference.y + y, radius, 0x808080)
       .setDepth(2);
   }
 
@@ -267,9 +311,24 @@ class motor {
     height,
     point1,
     point2,
+    powToSpeed,
     RelativeAngle = 0
   ) {
     this.speed = 0;
+    this.power = 0;
+    this.dir = 0;
+    this.radius = height / 20;
+    this.speedToPhaser = function (speed) {
+      return (speed * 3) / 5;
+    };
+
+    if (powToSpeed === undefined) {
+      this.powToSpeed = function (power) {
+        return power;
+      };
+    } else {
+      this.powToSpeed = powToSpeed;
+    }
 
     let delta = Math.sqrt(x ** 2 + y ** 2);
     let deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
@@ -316,7 +375,7 @@ class motor {
         )
       )
       .setAngle(BotAngle + RelativeAngle)
-      .setFrictionAir(0.5);
+      .setFrictionAir(0.9);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
@@ -363,8 +422,25 @@ class motor {
     });
   }
 
-  setSpeed(speed) {
-    this.speed = speed;
+  setSpeed(dir, power) {
+    if (power >= 0 && power <= 255) {
+      this.dir = dir;
+      this.power = power;
+      console.log(this.powToSpeed(power))
+      let speed = this.speedToPhaser(this.powToSpeed(power)*this.radius);
+
+      if (speed < 0) {
+        speed = 0;
+      }
+
+      if (dir == 0) {
+        this.speed = 0;
+      } else if (dir == 1) {
+        this.speed = speed;
+      } else if (dir == 2) {
+        this.speed = -speed;
+      }
+    }
   }
 
   update() {

@@ -2,6 +2,7 @@ class maqueenPlus {
   constructor(scene, name, x, y, angle) {
     //mise  en place de variable utilisables plus tard
     this.name = name;
+    this.type = "maqueenPlus";
 
     //mise en place du "corps" du robot
     this.body = scene.matter.add
@@ -12,6 +13,15 @@ class maqueenPlus {
       .setAngle(angle);
 
     //mise en place des moteurs
+    let speedGrowth = function (power) {
+      return (
+        -1e-8 * (power ** 4) +
+        1e-5 * (power ** 3) -
+        0.0032 * (power ** 2) +
+        0.4053 * (power) -
+        2.8394
+      );
+    };
     this.Lmotor = new motor(
       scene,
       this.body,
@@ -21,7 +31,8 @@ class maqueenPlus {
       9,
       43,
       { x: -10, y: 5 },
-      { x: -10, y: 49 }
+      { x: -10, y: 49 },
+      speedGrowth
     );
 
     this.Rmotor = new motor(
@@ -33,7 +44,8 @@ class maqueenPlus {
       9,
       43,
       { x: 10, y: 5 },
-      { x: 10, y: 49 }
+      { x: 10, y: 49 },
+      speedGrowth
     );
 
     //mise en place du capteur ultrason
@@ -56,6 +68,10 @@ class maqueenPlus {
     this.LLed = new rgbLed(scene, this.body, -20, -45);
 
     this.RLed = new rgbLed(scene, this.body, 20, -45);
+
+    //mise en place de l'i2c
+
+    this.i2c = new i2cPlus(this);
 
     // ajout du robot à la liste des robots
     scene.parent.robots.push(this);

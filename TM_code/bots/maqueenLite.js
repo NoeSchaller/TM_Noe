@@ -1,8 +1,8 @@
 class maqueenLite {
   constructor(scene, name, x, y, angle) {
     //mise  en place de variable utilisables plus tard
-    this.scale = 0.4;
     this.name = name;
+    this.type = "maqueenLite";
 
     //mise en place du "corps" du robot
     this.body = scene.matter.add
@@ -66,7 +66,7 @@ class maqueenLite {
     this.pin1; // ultrason
 
     // mise en place de l'i2c
-    this.i2c = new i2c(this);
+    this.i2c = new i2cLite(this);
 
     // ajout du robot à la liste des robots
     scene.parent.robots.push(this);
