@@ -319,7 +319,7 @@ class motor {
     this.dir = 0;
     this.radius = height / 20;
     this.speedToPhaser = function (speed) {
-      return (speed * 3) / 5;
+      return speed * 6;
     };
 
     if (powToSpeed === undefined) {
@@ -375,7 +375,7 @@ class motor {
         )
       )
       .setAngle(BotAngle + RelativeAngle)
-      .setFrictionAir(0.9);
+      .setFrictionAir(0.99);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
