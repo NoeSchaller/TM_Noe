@@ -1,9 +1,9 @@
 class CameraManager {
-  constructor(that, simulation, seeBot = 1) {
+  constructor(scene, simulation, seeBot = 1) {
     this.cam = simulation.cameras.main;
     this.follow = -1;
 
-    that.add
+    scene.add
       .text(10, 60, "-", {
         color: "#000",
         backgroundColor: "#fff",
@@ -12,10 +12,10 @@ class CameraManager {
       })
       .setInteractive()
       .on("pointerdown", () => {
-        (this.cam.zoom /= 1.2), (that.echelle.scale /= 1.2);
+        (this.cam.zoom /= 1.2), (scene.echelle.scale /= 1.2);
       });
 
-    that.add
+    scene.add
       .text(10, 10, "+", {
         color: "#000",
         backgroundColor: "#fff",
@@ -24,11 +24,11 @@ class CameraManager {
       })
       .setInteractive()
       .on("pointerdown", () => {
-        (this.cam.zoom *= 1.2), (that.echelle.scale *= 1.2);
+        (this.cam.zoom *= 1.2), (scene.echelle.scale *= 1.2);
       });
 
-    that.buttonsCam.push(
-      that.add
+    scene.buttonsCam.push(
+      scene.add
         .text(10, 110, "Free", {
           color: "#000",
           backgroundColor: "#999",
@@ -37,16 +37,16 @@ class CameraManager {
         .setInteractive()
         .on("pointerdown", () => {
           (this.follow = -1),
-            this.cursor.setPosition(15 + that.buttonsCam[0].width, 110),
+            this.cursor.setPosition(15 + scene.buttonsCam[0].width, 110),
             this.cam.stopFollow();
         })
     );
 
-    this.cursor = that.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
+    this.cursor = scene.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
 
     for (let i = 0; i < simulation.parent.robots.length; i++) {
-      that.buttonsCam.push(
-        that.add
+      scene.buttonsCam.push(
+        scene.add
           .text(10, 140 + 30 * i, simulation.parent.robots[i].name, {
             color: "#000",
             backgroundColor: "#999",
@@ -56,14 +56,14 @@ class CameraManager {
           .on("pointerdown", () => {
             (this.follow = i),
               this.cursor.setPosition(
-                15 + that.buttonsCam[i + 1].width,
+                15 + scene.buttonsCam[i + 1].width,
                 140 + 30 * i
               );
           })
       );
     }
 
-    this.cursor.setPosition(15 + that.buttonsCam[0].width, 113);
+    this.cursor.setPosition(15 + scene.buttonsCam[0].width, 113);
 
     this.follow = -1;
   }

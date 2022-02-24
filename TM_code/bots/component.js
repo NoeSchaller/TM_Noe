@@ -28,7 +28,7 @@ class i2cPlus {
       } else if (register == 0x02) {
         const dirR = byte[1],
           pR = byte[2];
-          console.log(pR)
+        console.log(pR);
         this.bot.Rmotor.setSpeed(dirR, pR);
       }
 
@@ -314,13 +314,14 @@ class motor {
     powToSpeed,
     RelativeAngle = 0
   ) {
+    this.scene = scene;
     this.speed = 0;
     this.power = 0;
     this.dir = 0;
     this.radius = height / 20;
-    this.speedToPhaser = function (speed) {
-      return speed * 6;
-    };
+    //this.speedToPhaser = function (speed) {
+    //  return speed * 6;
+    //};
 
     if (powToSpeed === undefined) {
       this.powToSpeed = function (power) {
@@ -375,7 +376,7 @@ class motor {
         )
       )
       .setAngle(BotAngle + RelativeAngle)
-      .setFrictionAir(0.99);
+      .setFrictionAir(0);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
@@ -420,14 +421,16 @@ class motor {
         y: deltaPoint2 * Math.sin(this.rotationPoint2),
       },
     });
+
+    this.time = 0
   }
 
   setSpeed(dir, power) {
     if (power >= 0 && power <= 255) {
       this.dir = dir;
       this.power = power;
-      console.log(this.powToSpeed(power))
-      let speed = this.speedToPhaser(this.powToSpeed(power)*this.radius);
+      let speed = this.powToSpeed(power) * this.radius
+      //this.speedToPhaser(this.powToSpeed(power) * this.radius);
 
       if (speed < 0) {
         speed = 0;
@@ -444,9 +447,16 @@ class motor {
   }
 
   update() {
-    this.wheel.setVelocity(
-      Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed,
-      Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed
-    );
+    //this.wheel.setVelocity(
+      //Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed,
+      //Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed
+    //);
+
+    this.time += 1
+
+    this.wheel.body.positionImpulse.x = Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed / (1000/120);
+
+    this.wheel.body.positionImpulse.y = Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed / (1000/120);
+
   }
 }

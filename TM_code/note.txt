@@ -1,14 +1,3 @@
 echelle : 100px = 10cm
-setVelocityX(x) => x*3/5 cm/s
 
-- faire des dossier par thème
-- simuler microbit (micropyhton microbit) (matrice, bouttons, accelerometre)
-- "vider" le maqueen
-    - forme
-    - controlleur
-    - actuateurs (pas les moteurs)
-    - capteurs
-
-faire le maqueen plus d'ici le 20.02
-
-prettier
+controler les ir pour le Plus (si noir = true)

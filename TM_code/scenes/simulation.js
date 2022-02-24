@@ -19,8 +19,6 @@ class Simul extends Phaser.Scene {
       frameWidth: 100,
       frameHeight: 103,
     });
-    
-    this.load.image("echelle", "assets/scale.png");
 
     this.mapLoad(this);
   }
@@ -30,12 +28,11 @@ class Simul extends Phaser.Scene {
     this.marks = [];
     this.walls = [];
 
-    this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
-
     this.mapCreate(this);
 
     if (this.mode) {
       this.scene.launch("setup", this);
+      this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
     }
     this.scene.launch("overlay", this);
   }

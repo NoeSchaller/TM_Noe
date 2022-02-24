@@ -11,11 +11,9 @@ class Setup extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('echelle', 'assets/scale.png')
     }
 
     create() {
-        this.echelle = this.add.image(70, this.height - 30, 'echelle')
 
         this.mapjs = ''
         this.mouse = this.input.mousePointer
@@ -72,7 +70,7 @@ class Setup extends Phaser.Scene {
 
         if (inputs.space.isDown) { this.cancel = true }
 
-        if (this.mouse.isDown && this.mouse.downX < this.width - 80) {
+        if (this.mouse.isDown && this.mouse.downX < this.width - 80 && this.mouse.downX > 60) {
             if (this.lastForm !== undefined) {
                 this.lastForm.destroy()
             }
