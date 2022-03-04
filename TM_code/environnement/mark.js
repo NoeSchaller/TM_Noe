@@ -17,8 +17,6 @@ class markCircle {
             that.add.circle(x, y, radius, 0x000000))
             .setCollidesWith(0)
 
-        console.log(that)
-
         that.marks.push(this)
     }
 }

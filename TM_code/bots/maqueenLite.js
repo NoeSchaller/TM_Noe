@@ -13,6 +13,10 @@ class maqueenLite {
       .setAngle(angle);
 
     //mise en place des moteurs
+    let speedGrowth = function (power) {
+      return -9e-09*power**4 + 7e-06*power**3 - 0.0021*power**2 + 0.3121*power - 1.2
+    };
+
     this.Lmotor = new motor(
       scene,
       this.body,
@@ -22,7 +26,8 @@ class maqueenLite {
       9,
       43,
       { x: -10, y: -4 },
-      { x: -10, y: 40 }
+      { x: -10, y: 40 },
+      speedGrowth
     );
 
     this.Rmotor = new motor(
@@ -34,7 +39,8 @@ class maqueenLite {
       9,
       43,
       { x: 10, y: -4 },
-      { x: 10, y: 40 }
+      { x: 10, y: 40 },
+      speedGrowth
     );
 
     //mise en place du capteur ultrason
@@ -80,5 +86,41 @@ class maqueenLite {
     this.irR.update();
     this.LLed.update();
     this.RLed.update();
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.Lmotor.wheel.setPosition(
+      x + this.Lmotor.delta * Math.cos(this.Lmotor.relAngle),
+      y + this.Lmotor.delta * Math.sin(this.Lmotor.relAngle)
+    );
+    this.Rmotor.wheel.setPosition(
+      x + this.Rmotor.delta * Math.cos(this.Rmotor.relAngle),
+      y + this.Rmotor.delta * Math.sin(this.Rmotor.relAngle)
+    );
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+
+    this.Lmotor.wheel.setPosition(
+      this.body.x +
+        this.Lmotor.delta *
+          Math.cos((deg / 180) * Math.PI + this.Lmotor.relAngle),
+      this.body.y +
+        this.Lmotor.delta *
+          Math.sin((deg / 180) * Math.PI + this.Lmotor.relAngle)
+    );
+    this.Lmotor.wheel.setAngle(deg);
+
+    this.Rmotor.wheel.setPosition(
+      this.body.x +
+        this.Rmotor.delta *
+          Math.cos((deg / 180) * Math.PI + this.Rmotor.relAngle),
+      this.body.y +
+        this.Rmotor.delta *
+          Math.sin((deg / 180) * Math.PI + this.Rmotor.relAngle)
+    );
+    this.Rmotor.wheel.setAngle(deg);
   }
 }

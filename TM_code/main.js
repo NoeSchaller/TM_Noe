@@ -1,18 +1,11 @@
-sim = new simulation(600, 600, "game", mapLoad, mapCreate, 0xcccac0, 0);
+sim = new simulation(600, 600, "game", mapLoad, mapCreate, 0xcccac0, 1);
 
-let old = 0,
-    ne = 0
+setTimeout(() => {
 
-/*
-setInterval(() => {
+   lite = sim.robots[1]
 
-  old = sim.robots[0].Lmotor.time
+   plus = sim.robots[0]
 
-  setTimeout(() => {
-     ne = sim.robots[0].Lmotor.time
-     console.log(ne - old) 
-  }, 1000);
-
-  
-}, 1500);
-*/
+   lite.setAngle(0)
+   plus.setAngle(90)
+}, 4000);

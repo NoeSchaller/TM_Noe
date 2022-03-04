@@ -15,10 +15,10 @@ class maqueenPlus {
     //mise en place des moteurs
     let speedGrowth = function (power) {
       return (
-        -1e-8 * (power ** 4) +
-        1e-5 * (power ** 3) -
-        0.0032 * (power ** 2) +
-        0.4053 * (power) -
+        -1e-8 * power ** 4 +
+        1e-5 * power ** 3 -
+        0.0032 * power ** 2 +
+        0.4053 * power -
         2.8394
       );
     };
@@ -89,5 +89,41 @@ class maqueenPlus {
     this.irR3.update();
     this.LLed.update();
     this.RLed.update();
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.Lmotor.wheel.setPosition(
+      x + this.Lmotor.delta * Math.cos(this.Lmotor.startAngle),
+      y + this.Lmotor.delta * Math.sin(this.Lmotor.startAngle)
+    );
+    this.Rmotor.wheel.setPosition(
+      x + this.Rmotor.delta * Math.cos(this.Rmotor.startAngle),
+      y + this.Rmotor.delta * Math.sin(this.Rmotor.startAngle)
+    );
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+
+    this.Lmotor.wheel.setPosition(
+      this.body.x +
+        this.Lmotor.delta *
+          Math.cos((deg / 180) * Math.PI + this.Lmotor.relAngle),
+      this.body.y +
+        this.Lmotor.delta *
+          Math.sin((deg / 180) * Math.PI + this.Lmotor.relAngle)
+    );
+    this.Lmotor.wheel.setAngle(deg);
+
+    this.Rmotor.wheel.setPosition(
+      this.body.x +
+        this.Rmotor.delta *
+          Math.cos((deg / 180) * Math.PI + this.Rmotor.relAngle),
+      this.body.y +
+        this.Rmotor.delta *
+          Math.sin((deg / 180) * Math.PI + this.Rmotor.relAngle)
+    );
+    this.Rmotor.wheel.setAngle(deg);
   }
 }

@@ -72,14 +72,27 @@ class i2cLite {
 
   write(adresse, byte) {
     if (adresse == 0x10) {
-      if (byte[0] == 0x00) {
-        this.bot.Lmotor.setSpeed(byte[1], byte[2]);
+      const register = byte[0];
 
-        if (byte.length > 3) {
-          this.bot.Rmotor.setSpeed(byte[3], byte[4]);
+      //gestion des moteur
+      if (register == 0x00) {
+        if (byte.length == 3) {
+          const dirL = byte[1],
+            pL = byte[2];
+          this.bot.Lmotor.setSpeed(dirL, pL);
+        } else if (byte.length == 5) {
+          const dirL = byte[1],
+            pL = byte[2],
+            dirR = byte[3],
+            pR = byte[4];
+          this.bot.Lmotor.setSpeed(dirL, pL);
+          this.bot.Rmotor.setSpeed(dirR, pR);
         }
-      } else if (byte[0] == 0x02) {
-        this.bot.Rmotor.setSpeed(byte[1], byte[2]);
+      } else if (register == 0x02) {
+        const dirR = byte[1],
+          pR = byte[2];
+        console.log(pR);
+        this.bot.Rmotor.setSpeed(dirR, pR);
       }
     }
   }
@@ -311,8 +324,7 @@ class motor {
     height,
     point1,
     point2,
-    powToSpeed,
-    RelativeAngle = 0
+    powToSpeed
   ) {
     this.scene = scene;
     this.speed = 0;
@@ -331,13 +343,15 @@ class motor {
       this.powToSpeed = powToSpeed;
     }
 
-    let delta = Math.sqrt(x ** 2 + y ** 2);
+    this.delta = Math.sqrt(x ** 2 + y ** 2);
     let deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
     let deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
 
     if (x >= 0) {
+      this.relAngle = Math.atan(y / x);
       this.startAngle = Math.atan(y / x) + (BotAngle / 180) * Math.PI;
     } else {
+      this.relAngle = Math.PI + Math.atan(y / x);
       this.startAngle = Math.PI + Math.atan(y / x) + (BotAngle / 180) * Math.PI;
     }
 
@@ -357,26 +371,26 @@ class motor {
         (BotAngle / 180 + 1) * Math.PI + Math.atan(point2.y / point2.x);
     }
 
-    let rotationWheel = ((RelativeAngle + BotAngle) / 180) * Math.PI;
+    let rotationWheel = (BotAngle / 180) * Math.PI;
 
     this.wheel = scene.matter.add
       .gameObject(
         scene.add.rectangle(
-          reference.x + delta * Math.cos(this.startAngle),
-          reference.y + delta * Math.sin(this.startAngle),
+          reference.x + this.delta * Math.cos(this.startAngle),
+          reference.y + this.delta * Math.sin(this.startAngle),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
-          reference.x + delta * Math.cos(this.startAngle),
-          reference.y + delta * Math.sin(this.startAngle),
+          reference.x + this.delta * Math.cos(this.startAngle),
+          reference.y + this.delta * Math.sin(this.startAngle),
           width,
           height
         )
       )
-      .setAngle(BotAngle + RelativeAngle)
-      .setFrictionAir(0);
+      .setAngle(BotAngle)
+      .setFrictionAir(3);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
@@ -422,15 +436,14 @@ class motor {
       },
     });
 
-    this.time = 0
+    this.time = 0;
   }
 
   setSpeed(dir, power) {
     if (power >= 0 && power <= 255) {
       this.dir = dir;
       this.power = power;
-      let speed = this.powToSpeed(power) * this.radius
-      //this.speedToPhaser(this.powToSpeed(power) * this.radius);
+      let speed = this.powToSpeed(power) * this.radius;
 
       if (speed < 0) {
         speed = 0;
@@ -447,16 +460,10 @@ class motor {
   }
 
   update() {
-    //this.wheel.setVelocity(
-      //Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed,
-      //Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed
-    //);
+    this.wheel.body.positionImpulse.x =
+      (Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed) / (1000 / 120);
 
-    this.time += 1
-
-    this.wheel.body.positionImpulse.x = Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed / (1000/120);
-
-    this.wheel.body.positionImpulse.y = Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed / (1000/120);
-
+    this.wheel.body.positionImpulse.y =
+      (Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed) / (1000 / 120);
   }
 }
