@@ -7,6 +7,18 @@ class wallRect {
 
     that.walls.push(this.body);
   }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+  }
+
+  setScale(x, y) {
+    this.body.setScale(x, y);
+  }
 }
 
 class wallCircle {
@@ -17,5 +29,17 @@ class wallCircle {
       .setFriction(1);
 
     that.walls.push(this.body);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+  }
+
+  setScale(x, y) {
+    this.body.setScale(x, y);
   }
 }
