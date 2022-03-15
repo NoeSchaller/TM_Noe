@@ -1,70 +1,85 @@
 class markRect {
-  constructor(that, x, y, width, height, angle = 0) {
+  constructor(scene, x, y, width, height, angle = 0) {
     this.pic = "geom";
-    this.body = that.matter.add
-      .gameObject(that.add.rectangle(x, y, width, height, 0x000000))
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .gameObject(scene.add.rectangle(x, y, width, height, 0x000000))
       .setCollidesWith(0)
       .setAngle(angle);
 
-    that.marks.push(this);
+    scene.marks.push(this);
   }
 
   setPosition(x, y) {
     this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
   }
 
   setAngle(deg) {
     this.body.setAngle(deg);
+    this.angle = angle;
   }
 
   setScale(x, y) {
     this.body.setScale(x, y);
+    this.scale = { x: x, y: y };
   }
 }
 
 class markCircle {
-  constructor(that, x, y, radius) {
+  constructor(scene, x, y, radius) {
     this.pic = "geom";
-    this.body = that.matter.add
-      .gameObject(that.add.circle(x, y, radius, 0x000000))
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.circle(x, y, radius, 0x000000))
       .setCollidesWith(0);
 
-    that.marks.push(this);
+    scene.marks.push(this);
   }
 
   setPosition(x, y) {
     this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
   }
 
   setAngle(deg) {
     this.body.setAngle(deg);
+    this.angle = angle;
   }
 
   setScale(x, y) {
     this.body.setScale(x, y);
+    this.scale = { x: x, y: y };
   }
 }
 
 class Picture {
-  constructor(that, key, x, y, angle = 0) {
+  constructor(scene, key, x, y, scaleX = 1, scaleY = 1) {
     this.pic = key;
-    this.pos = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.body = that.matter.add
+    this.position = { x: x, y: y };
+    this.scale = { x: scaleX, y: scaleY };
+    this.angle = 0;
+    this.body = scene.matter.add
       .image(x, y, key)
       .setCollidesWith(0)
-      .setAngle(angle);
+      .setAngle(0)
+      .setScale(scaleX, scaleY);
 
-    that.marks.push(this);
+    scene.marks.push(this);
   }
 
   setPosition(x, y) {
     this.body.setPosition(x, y);
-    this.pos = { x: x, y: y };
+    this.position = { x: x, y: y };
   }
 
   setAngle(deg) {
-    this.body.setAngle(deg);
+    this.body.setAngle(0);
+    this.angle = 0;
   }
 
   setScale(x, y) {

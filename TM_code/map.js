@@ -1,9 +1,9 @@
 function mapLoad(scene) {
-  scene.load.image("csud", "assets/Logo_csud.png");
+  scene.load.image("csud", "assets/irTest.png");
 }
 
 function mapCreate(scene) {
-  new Picture(scene, "csud", 400, 100, 45);
+  new Picture(scene, "csud", 400, 100, 2, 3);
 
   new wallRect(scene, 100, 200, 50, 200, 80);
 

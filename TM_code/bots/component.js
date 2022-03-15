@@ -128,7 +128,7 @@ class ultrasonicD {
     }
 
     this.raycaster = scene.raycasterPlugin.createRaycaster();
-    this.raycaster.mapGameObjects(scene.walls);
+    this.raycaster.mapGameObjects(scene.RaycasterDomain);
     this.rayCone = this.raycaster
       .createRay({
         origin: {
@@ -143,13 +143,13 @@ class ultrasonicD {
 
     this.rayCone.enablePhysics("matter");
 
-    this.raycaster.mapGameObjects(scene.walls);
+    this.raycaster.mapGameObjects(scene.RaycasterDomain);
   }
 
   getDistance() {
     let distances = [];
     let distance;
-    this.raycaster.mapGameObjects(this.scene.walls);
+    this.raycaster.mapGameObjects(this.scene.RaycasterDomain);
     this.intersections = this.rayCone.castCone();
     for (let i = 0; i < this.intersections.length; i++) {
       distance = Math.sqrt(
@@ -201,22 +201,23 @@ class infra {
   isMarked() {
     for (let i = 0; i < this.scene.marks.length; i++) {
       if (this.scene.matter.overlap(this.ir, this.scene.marks[i].body)) {
-        if (this.scene.marks[i].pic == "geom") {
+        const mark = this.scene.marks[i]
+        if (mark.pic == "geom") {
           return true;
         }
-        const color = this.scene.textures.getPixel(
-          (this.ir.x -
-            this.scene.marks[i].pos.x +
-            (this.scene.marks[i].body.width * this.scene.marks[i].scale.x) /
-              2) /
-            this.scene.marks[i].scale.x,
-          (this.ir.y -
-            this.scene.marks[i].pos.y +
-            (this.scene.marks[i].body.width * this.scene.marks[i].scale.y) /
-              2) /
-            this.scene.marks[i].scale.y,
-          this.scene.marks[i].pic
-        );
+        const  color = this.scene.textures.getPixel(
+            (this.ir.x -
+              mark.position.x +
+              (mark.body.width * mark.scale.x) /
+                2) /
+              mark.scale.x,
+            (this.ir.y -
+              mark.position.y +
+              (mark.body.width * mark.scale.y) /
+                2) /
+              mark.scale.y,
+            mark.pic
+          );
         if (color == null) {
         } else {
           if ((color.v < 0.2) & (color.a != 0)) {
@@ -435,8 +436,6 @@ class motor {
         y: deltaPoint2 * Math.sin(this.rotationPoint2),
       },
     });
-
-    this.time = 0;
   }
 
   setSpeed(dir, power) {

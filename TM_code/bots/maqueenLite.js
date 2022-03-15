@@ -75,7 +75,7 @@ class maqueenLite {
     this.i2c = new i2cLite(this);
 
     // ajout du robot à la liste des robots
-    scene.parent.robots.push(this);
+    scene.robots.push(this);
   }
 
   update() {

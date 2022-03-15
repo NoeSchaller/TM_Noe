@@ -1,10 +1,11 @@
 class Simul extends Phaser.Scene {
-  constructor(that, mapLoad, mapCreate, mode) {
+  constructor(robots, walls, marks, mapLoad, mapCreate) {
     super("simulation");
     this.mapLoad = mapLoad;
     this.mapCreate = mapCreate;
-    this.parent = that;
-    this.mode = mode;
+    this.robots = robots;
+    this.walls = walls;
+    this.marks = marks;
   }
 
   preload() {
@@ -24,23 +25,18 @@ class Simul extends Phaser.Scene {
   }
 
   create() {
-    this.frame = 0;
-    this.marks = [];
-    this.walls = [];
+    this.RaycasterDomain = [];
 
     this.mapCreate(this);
 
-    if (this.mode) {
-      this.scene.launch("setup", this);
-      this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
-    }
-    this.scene.launch("overlay", this);
+    this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
+    
+    this.scene.launch("overlay", [this.robots, this.cameras.main]);
   }
 
   update() {
-    for (let i = 0; i < this.parent.robots.length; i++) {
-      this.parent.robots[i].update();
+    for (let i = 0; i < this.robots.length; i++) {
+      this.robots[i].update();
     }
-    this.frame++;
   }
 }

@@ -9,6 +9,8 @@ class simulation {
     mode = 0
   ) {
     this.robots = [];
+    this.walls = [];
+    this.marks = [];
     this.game = new Phaser.Game({
       width: width,
       height: height,
@@ -16,9 +18,15 @@ class simulation {
       type: Phaser.WEBGL,
       canvas: document.getElementById(id),
       scene: [
-        new Simul(this, mapLoad, mapCreate, mode),
-        new Setup(width, height),
-        new Over(this, width, height),
+        new Simul(
+          this.robots,
+          this.walls,
+          this.marks,
+          mapLoad,
+          mapCreate,
+          mode
+        ),
+        new Over(this.robots, width, height),
       ],
       physics: {
         default: "matter",

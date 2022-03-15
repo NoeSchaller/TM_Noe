@@ -1,7 +1,8 @@
 class CameraManager {
-  constructor(scene, simulation, seeBot = 1) {
-    this.cam = simulation.cameras.main;
+  constructor(scene, robots, camera) {
+    this.camera = camera;
     this.follow = -1;
+
 
     scene.add
       .text(10, 60, "-", {
@@ -12,7 +13,7 @@ class CameraManager {
       })
       .setInteractive()
       .on("pointerdown", () => {
-        (this.cam.zoom /= 1.2), (scene.echelle.scale /= 1.2);
+        (this.camera.zoom /= 1.2), (scene.echelle.scale /= 1.2);
       });
 
     scene.add
@@ -24,7 +25,7 @@ class CameraManager {
       })
       .setInteractive()
       .on("pointerdown", () => {
-        (this.cam.zoom *= 1.2), (scene.echelle.scale *= 1.2);
+        (this.camera.zoom *= 1.2), (scene.echelle.scale *= 1.2);
       });
 
     scene.buttonsCam.push(
@@ -38,16 +39,16 @@ class CameraManager {
         .on("pointerdown", () => {
           (this.follow = -1),
             this.cursor.setPosition(15 + scene.buttonsCam[0].width, 110),
-            this.cam.stopFollow();
+            this.camera.stopFollow();
         })
     );
 
     this.cursor = scene.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
 
-    for (let i = 0; i < simulation.parent.robots.length; i++) {
+    for (let i = 0; i < robots.length; i++) {
       scene.buttonsCam.push(
         scene.add
-          .text(10, 140 + 30 * i, simulation.parent.robots[i].name, {
+          .text(10, 140 + 30 * i, robots[i].name, {
             color: "#000",
             backgroundColor: "#999",
             padding: 3,
@@ -68,7 +69,7 @@ class CameraManager {
     this.follow = -1;
   }
 
-  update(simulation, scene) {
+  update(robots, scene) {
     let inputs = scene.input.keyboard.addKeys({
       up: "up",
       down: "down",
@@ -78,18 +79,18 @@ class CameraManager {
 
     if (this.follow == -1) {
       if (inputs.up.isDown) {
-        this.cam.scrollY -= 5;
+        this.camera.scrollY -= 5;
       } else if (inputs.down.isDown) {
-        this.cam.scrollY += 5;
+        this.camera.scrollY += 5;
       }
 
       if (inputs.left.isDown) {
-        this.cam.scrollX -= 5;
+        this.camera.scrollX -= 5;
       } else if (inputs.right.isDown) {
-        this.cam.scrollX += 5;
+        this.camera.scrollX += 5;
       }
     } else {
-      this.cam.startFollow(simulation.robots[this.follow].body);
+      this.camera.startFollow(robots[this.follow].body);
     }
   }
 }

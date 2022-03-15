@@ -74,7 +74,7 @@ class maqueenPlus {
     this.i2c = new i2cPlus(this);
 
     // ajout du robot à la liste des robots
-    scene.parent.robots.push(this);
+    scene.robots.push(this);
   }
 
   update() {
