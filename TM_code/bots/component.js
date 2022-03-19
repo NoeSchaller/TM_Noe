@@ -120,7 +120,7 @@ class ultrasonicD {
     this.scene = scene;
     this.range = range;
     this.angle = (angle / 180) * Math.PI;
-    this.delta = Math.sqrt(x ** 2 + y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     if (x >= 0) {
       this.relAngle = Math.atan(y / x);
     } else {
@@ -170,9 +170,9 @@ class ultrasonicD {
     this.rayCone
       .setOrigin(
         this.reference.x +
-          this.delta * Math.cos(this.reference.rotation + this.relAngle),
+          this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
         this.reference.y +
-          this.delta * Math.sin(this.reference.rotation + this.relAngle)
+          this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
       )
       .setAngle(this.reference.rotation - Math.PI / 2 + this.angle);
   }
@@ -182,7 +182,7 @@ class infra {
   constructor(scene, reference, x, y, radius = 2) {
     this.scene = scene;
     this.reference = reference;
-    this.delta = Math.sqrt(x ** 2 + y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     if (x >= 0) {
       this.relAngle = Math.atan(y / x);
     } else {
@@ -201,23 +201,17 @@ class infra {
   isMarked() {
     for (let i = 0; i < this.scene.marks.length; i++) {
       if (this.scene.matter.overlap(this.ir, this.scene.marks[i].body)) {
-        const mark = this.scene.marks[i]
+        const mark = this.scene.marks[i];
         if (mark.pic == "geom") {
           return true;
         }
-        const  color = this.scene.textures.getPixel(
-            (this.ir.x -
-              mark.position.x +
-              (mark.body.width * mark.scale.x) /
-                2) /
-              mark.scale.x,
-            (this.ir.y -
-              mark.position.y +
-              (mark.body.width * mark.scale.y) /
-                2) /
-              mark.scale.y,
-            mark.pic
-          );
+        const color = this.scene.textures.getPixel(
+          (this.ir.x - mark.position.x + (mark.body.width * mark.scale.x) / 2) /
+            mark.scale.x,
+          (this.ir.y - mark.position.y + (mark.body.width * mark.scale.y) / 2) /
+            mark.scale.y,
+          mark.pic
+        );
         if (color == null) {
         } else {
           if ((color.v < 0.2) & (color.a != 0)) {
@@ -232,9 +226,9 @@ class infra {
   update() {
     this.ir.setPosition(
       this.reference.x +
-        this.delta * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
       this.reference.y +
-        this.delta * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
     );
 
     if (this.isMarked()) {
@@ -249,7 +243,7 @@ class led {
   constructor(scene, reference, x, y, radius = 4) {
     this.reference = reference;
     this.on = false;
-    this.delta = Math.sqrt(x ** 2 + y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     if (x >= 0) {
       this.relAngle = Math.atan(y / x);
     } else {
@@ -278,9 +272,9 @@ class led {
   update() {
     this.led.setPosition(
       this.reference.x +
-        this.delta * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
       this.reference.y +
-        this.delta * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
     );
   }
 }
@@ -288,7 +282,7 @@ class led {
 class rgbLed {
   constructor(scene, reference, x, y, radius = 5) {
     this.reference = reference;
-    this.delta = Math.sqrt(x ** 2 + y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     if (x >= 0) {
       this.relAngle = Math.atan(y / x);
     } else {
@@ -307,9 +301,9 @@ class rgbLed {
   update() {
     this.rgb.setPosition(
       this.reference.x +
-        this.delta * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
       this.reference.y +
-        this.delta * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
     );
   }
 }
@@ -318,7 +312,7 @@ class motor {
   constructor(
     scene,
     reference,
-    BotAngle,
+    robotRotation,
     x,
     y,
     width,
@@ -332,9 +326,6 @@ class motor {
     this.power = 0;
     this.dir = 0;
     this.radius = height / 20;
-    //this.speedToPhaser = function (speed) {
-    //  return speed * 6;
-    //};
 
     if (powToSpeed === undefined) {
       this.powToSpeed = function (power) {
@@ -344,96 +335,79 @@ class motor {
       this.powToSpeed = powToSpeed;
     }
 
-    this.delta = Math.sqrt(x ** 2 + y ** 2);
-    let deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
-    let deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
+    const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
+    const deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
 
-    if (x >= 0) {
-      this.relAngle = Math.atan(y / x);
-      this.startAngle = Math.atan(y / x) + (BotAngle / 180) * Math.PI;
-    } else {
-      this.relAngle = Math.PI + Math.atan(y / x);
-      this.startAngle = Math.PI + Math.atan(y / x) + (BotAngle / 180) * Math.PI;
-    }
+    this.rotationOrigin = Math.atan2(y, x);
 
-    if (point1.x >= 0) {
-      this.rotationPoint1 =
-        (BotAngle / 180) * Math.PI + Math.atan(point1.y / point1.x);
-    } else {
-      this.rotationPoint1 =
-        (BotAngle / 180 + 1) * Math.PI + Math.atan(point1.y / point1.x);
-    }
-
-    if (point2.x >= 0) {
-      this.rotationPoint2 =
-        (BotAngle / 180) * Math.PI + Math.atan(point2.y / point2.x);
-    } else {
-      this.rotationPoint2 =
-        (BotAngle / 180 + 1) * Math.PI + Math.atan(point2.y / point2.x);
-    }
-
-    let rotationWheel = (BotAngle / 180) * Math.PI;
+    this.rotationPoint1 = Math.atan2(point1.y, point1.x);
+    this.rotationPoint2 = Math.atan2(point2.y, point2.x);
 
     this.wheel = scene.matter.add
       .gameObject(
         scene.add.rectangle(
-          reference.x + this.delta * Math.cos(this.startAngle),
-          reference.y + this.delta * Math.sin(this.startAngle),
+          reference.x +
+            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y +
+            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
-          reference.x + this.delta * Math.cos(this.startAngle),
-          reference.y + this.delta * Math.sin(this.startAngle),
+          reference.x +
+            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y +
+            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height
         )
       )
-      .setAngle(BotAngle)
+      .setRotation(robotRotation)
       .setFrictionAir(3);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(-rotationWheel),
-        y: (height / 2) * Math.cos(-rotationWheel),
+        x: (height / 2) * Math.sin(-robotRotation),
+        y: (height / 2) * Math.cos(-robotRotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(this.rotationPoint1),
-        y: deltaPoint1 * Math.sin(this.rotationPoint1),
+        x: deltaPoint1 * Math.cos(this.rotationPoint1 + robotRotation),
+        y: deltaPoint1 * Math.sin(this.rotationPoint1 + robotRotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(-rotationWheel),
-        y: (height / 2) * Math.cos(-rotationWheel),
+        x: (height / 2) * Math.sin(-robotRotation),
+        y: (height / 2) * Math.cos(-robotRotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(this.rotationPoint2),
-        y: deltaPoint2 * Math.sin(this.rotationPoint2),
+        x: deltaPoint2 * Math.cos(this.rotationPoint2 + robotRotation),
+        y: deltaPoint2 * Math.sin(this.rotationPoint2 + robotRotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(rotationWheel),
-        y: (-height / 2) * Math.cos(rotationWheel),
+        x: (height / 2) * Math.sin(robotRotation),
+        y: (-height / 2) * Math.cos(robotRotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(this.rotationPoint1),
-        y: deltaPoint1 * Math.sin(this.rotationPoint1),
+        x: deltaPoint1 * Math.cos(this.rotationPoint1 + robotRotation),
+        y: deltaPoint1 * Math.sin(this.rotationPoint1 + robotRotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(rotationWheel),
-        y: (-height / 2) * Math.cos(rotationWheel),
+        x: (height / 2) * Math.sin(robotRotation),
+        y: (-height / 2) * Math.cos(robotRotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(this.rotationPoint2),
-        y: deltaPoint2 * Math.sin(this.rotationPoint2),
+        x: deltaPoint2 * Math.cos(this.rotationPoint2 + robotRotation),
+        y: deltaPoint2 * Math.sin(this.rotationPoint2 + robotRotation),
       },
     });
   }
@@ -442,7 +416,7 @@ class motor {
     if (power >= 0 && power <= 255) {
       this.dir = dir;
       this.power = power;
-      let speed = this.powToSpeed(power) * this.radius;
+      const speed = this.powToSpeed(power) * this.radius  * (12 / 100);
 
       if (speed < 0) {
         speed = 0;
@@ -460,9 +434,9 @@ class motor {
 
   update() {
     this.wheel.body.positionImpulse.x =
-      (Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed) / (1000 / 120);
+      (Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed);
 
     this.wheel.body.positionImpulse.y =
-      (Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed) / (1000 / 120);
+      (Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed);
   }
 }

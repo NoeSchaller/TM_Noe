@@ -20,7 +20,7 @@ class maqueenLite {
     this.Lmotor = new motor(
       scene,
       this.body,
-      angle,
+      angle / 180 * Math.PI,
       -35,
       18,
       9,
@@ -33,7 +33,7 @@ class maqueenLite {
     this.Rmotor = new motor(
       scene,
       this.body,
-      angle,
+      angle / 180 * Math.PI,
       35,
       18,
       9,
@@ -66,8 +66,8 @@ class maqueenLite {
     ); //LLed
     this.pin12 = new pin(
       this,
-      "thid.robot.RLed.getOn()",
-      "thid.robot.RLed.setOn()"
+      "this.robot.RLed.getOn()",
+      "this.robot.RLed.setOn()"
     ); // RLed
     this.pin1; // ultrason
 
