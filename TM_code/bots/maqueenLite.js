@@ -14,13 +14,19 @@ class maqueenLite {
 
     //mise en place des moteurs
     let speedGrowth = function (power) {
-      return -9e-09*power**4 + 7e-06*power**3 - 0.0021*power**2 + 0.3121*power - 1.2
+      return (
+        -9e-9 * power ** 4 +
+        7e-6 * power ** 3 -
+        0.0021 * power ** 2 +
+        0.3121 * power -
+        1.2
+      );
     };
 
     this.Lmotor = new motor(
       scene,
       this.body,
-      angle / 180 * Math.PI,
+      (angle / 180) * Math.PI,
       -35,
       18,
       9,
@@ -33,7 +39,7 @@ class maqueenLite {
     this.Rmotor = new motor(
       scene,
       this.body,
-      angle / 180 * Math.PI,
+      (angle / 180) * Math.PI,
       35,
       18,
       9,
@@ -47,9 +53,9 @@ class maqueenLite {
     this.ultrasonic = new ultrasonicD(scene, this.body, 0, -35);
 
     //mise en place des capteurs infrarouges
-    this.irL = new infra(scene, this.body, -7, -16);
+    this.irL = new infra(scene, this.body, -7, -16, 2, false);
 
-    this.irR = new infra(scene, this.body, 7, -16);
+    this.irR = new infra(scene, this.body, 7, -16, 2, false);
 
     //mise en place des leds
     this.LLed = new led(scene, this.body, -18, -32);
@@ -76,6 +82,10 @@ class maqueenLite {
 
     // ajout du robot à la liste des robots
     scene.robots.push(this);
+  }
+
+  getDistance() {
+    return this.ultrasonic.getDistance();
   }
 
   update() {

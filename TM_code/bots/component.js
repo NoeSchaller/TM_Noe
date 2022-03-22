@@ -1,10 +1,11 @@
 class i2cPlus {
-  constructor(bot) {
-    this.bot = bot;
+  constructor(robot) {
+    this.robot = robot;
     this.colors = [
       0xff0000, 0x00ff00, 0xffff00, 0x0000ff, 0xff00ff, 0x00ffff, 0xffffff,
       0x808080,
     ];
+    this.buffer = [];
   }
 
   write(adresse, byte) {
@@ -16,20 +17,32 @@ class i2cPlus {
         if (byte.length == 3) {
           const dirL = byte[1],
             pL = byte[2];
-          this.bot.Lmotor.setSpeed(dirL, pL);
+          this.robot.Lmotor.setSpeed(dirL, pL);
         } else if (byte.length == 5) {
           const dirL = byte[1],
             pL = byte[2],
             dirR = byte[3],
             pR = byte[4];
-          this.bot.Lmotor.setSpeed(dirL, pL);
-          this.bot.Rmotor.setSpeed(dirR, pR);
+          this.robot.Lmotor.setSpeed(dirL, pL);
+          this.robot.Rmotor.setSpeed(dirR, pR);
         }
+        this.buffer.push(this.robot.Rmotor.power);
+        this.buffer.push(this.robot.Rmotor.dir);
+        this.buffer.push(this.robot.Lmotor.power);
+        this.buffer.push(this.robot.Lmotor.dir);
       } else if (register == 0x02) {
         const dirR = byte[1],
           pR = byte[2];
         console.log(pR);
-        this.bot.Rmotor.setSpeed(dirR, pR);
+        this.robot.Rmotor.setSpeed(dirR, pR);
+
+        this.buffer.push(this.robot.Rmotor.power);
+        this.buffer.push(this.robot.Rmotor.dir);
+      } else if (register == 0x04) {
+        this.buffer.push(this.robot.Rmotor.angle % 256);
+        this.buffer.push((this.robot.Rmotor.angle >> 8) % 256);
+        this.buffer.push(this.robot.Lmotor.angle % 256);
+        this.buffer.push((this.robot.Lmotor.angle >> 8) % 256);
       }
 
       //gestion des leds rgb
@@ -37,28 +50,71 @@ class i2cPlus {
         if (byte.length == 3) {
           const colorL = this.colors[byte[1] - 1],
             colorR = this.colors[byte[2] - 1];
-
-          this.bot.LLed.setColor(colorL);
-          this.bot.RLed.setColor(colorR);
+          this.robot.LLed.setColor(colorL);
+          this.robot.RLed.setColor(colorR);
         } else if (byte.length == 2) {
           const colorL = this.colors[byte[1] - 1];
-
-          this.bot.LLed.setColor(colorL);
+          this.robot.LLed.setColor(colorL);
         }
       } else if (register == 0x0c) {
         const colorR = this.colors[byte[1] - 1];
+        this.robot.RLed.setColor(colorR);
+      } else if (register == 0x1d) {
+        let octet = 0;
+        if (this.robot.irL3.isMarked()) {
+          octet += 32;
+        }
+        if (this.robot.irL2.isMarked()) {
+          octet += 16;
+        }
+        if (this.robot.irL1.isMarked()) {
+          octet += 8;
+        }
+        if (this.robot.irR1.isMarked()) {
+          octet += 4;
+        }
+        if (this.robot.irR2.isMarked()) {
+          octet += 2;
+        }
+        if (this.robot.irR3.isMarked()) {
+          octet += 1;
+        }
+        this.buffer.push(octet);
+      }
 
-        this.bot.RLed.setColor(colorR);
+      // gestion des ir
+      else if (register == 0x1d) {
+        let byte = 0;
+        if (this.robot.irL3.isMarked()) {
+          byte += 32;
+        }
+        if (this.robot.irL2.isMarked()) {
+          byte += 16;
+        }
+        if (this.robot.irL1.isMarked()) {
+          byte += 8;
+        }
+        if (this.robot.irR1.isMarked()) {
+          byte += 4;
+        }
+        if (this.robot.irR2.isMarked()) {
+          byte += 2;
+        }
+        if (this.robot.irR3.isMarked()) {
+          byte += 1;
+        }
+
+        this.buffer.push(byte);
       }
     }
   }
 
   read(adresse, nb) {
     if (adresse == 0x10) {
-      let get = [0] * nb;
+      let get = [];
 
       for (let i = 0; i < nb; i++) {
-        get[i] = this.buffer[i];
+        get.push(this.buffer[this.buffer.length - i - 1]);
       }
       return get;
     }
@@ -66,8 +122,8 @@ class i2cPlus {
 }
 
 class i2cLite {
-  constructor(bot) {
-    this.bot = bot;
+  constructor(robot) {
+    this.robot = robot;
   }
 
   write(adresse, byte) {
@@ -79,20 +135,20 @@ class i2cLite {
         if (byte.length == 3) {
           const dirL = byte[1],
             pL = byte[2];
-          this.bot.Lmotor.setSpeed(dirL, pL);
+          this.robot.Lmotor.setSpeed(dirL, pL);
         } else if (byte.length == 5) {
           const dirL = byte[1],
             pL = byte[2],
             dirR = byte[3],
             pR = byte[4];
-          this.bot.Lmotor.setSpeed(dirL, pL);
-          this.bot.Rmotor.setSpeed(dirR, pR);
+          this.robot.Lmotor.setSpeed(dirL, pL);
+          this.robot.Rmotor.setSpeed(dirR, pR);
         }
       } else if (register == 0x02) {
         const dirR = byte[1],
           pR = byte[2];
         console.log(pR);
-        this.bot.Rmotor.setSpeed(dirR, pR);
+        this.robot.Rmotor.setSpeed(dirR, pR);
       }
     }
   }
@@ -121,11 +177,7 @@ class ultrasonicD {
     this.range = range;
     this.angle = (angle / 180) * Math.PI;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
-    if (x >= 0) {
-      this.relAngle = Math.atan(y / x);
-    } else {
-      this.relAngle = Math.PI + Math.atan(y / x);
-    }
+    this.rotationOrigin = Math.atan2(y, x);
 
     this.raycaster = scene.raycasterPlugin.createRaycaster();
     this.raycaster.mapGameObjects(scene.RaycasterDomain);
@@ -170,24 +222,23 @@ class ultrasonicD {
     this.rayCone
       .setOrigin(
         this.reference.x +
-          this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
+          this.deltaOrigin *
+            Math.cos(this.reference.rotation + this.rotationOrigin),
         this.reference.y +
-          this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
+          this.deltaOrigin *
+            Math.sin(this.reference.rotation + this.rotationOrigin)
       )
       .setAngle(this.reference.rotation - Math.PI / 2 + this.angle);
   }
 }
 
 class infra {
-  constructor(scene, reference, x, y, radius = 2) {
+  constructor(scene, reference, x, y, radius = 2, StateBlack = true) {
     this.scene = scene;
     this.reference = reference;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
-    if (x >= 0) {
-      this.relAngle = Math.atan(y / x);
-    } else {
-      this.relAngle = Math.PI + Math.atan(y / x);
-    }
+    this.rotationOrigin = Math.atan2(y, x);
+    this.StateBlack = StateBlack;
 
     this.ir = scene.matter.add
       .gameObject(
@@ -215,20 +266,30 @@ class infra {
         if (color == null) {
         } else {
           if ((color.v < 0.2) & (color.a != 0)) {
-            return true;
+            if (this.StateBlack) {
+              return true;
+            } else {
+              return false;
+            }
           }
         }
       }
     }
-    return false;
+    if (this.StateBlack) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   update() {
     this.ir.setPosition(
       this.reference.x +
-        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin *
+          Math.cos(this.reference.rotation + this.rotationOrigin),
       this.reference.y +
-        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin *
+          Math.sin(this.reference.rotation + this.rotationOrigin)
     );
 
     if (this.isMarked()) {
@@ -244,11 +305,7 @@ class led {
     this.reference = reference;
     this.on = false;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
-    if (x >= 0) {
-      this.relAngle = Math.atan(y / x);
-    } else {
-      this.relAngle = Math.PI + Math.atan(y / x);
-    }
+    this.rotationOrigin = Math.atan2(y, x);
 
     this.led = scene.add
       .circle(reference.x + x, reference.y + y, radius, 0x500000)
@@ -257,37 +314,32 @@ class led {
 
   setOn(bool) {
     this.on = bool;
-
-    if (bool) {
-      this.led.fillColor = 0xff0000;
-    } else {
-      this.led.fillColor = 0x500000;
-    }
-  }
-
-  getOn() {
-    return this.on;
   }
 
   update() {
     this.led.setPosition(
       this.reference.x +
-        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin *
+          Math.cos(this.reference.rotation + this.rotationOrigin),
       this.reference.y +
-        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin *
+          Math.sin(this.reference.rotation + this.rotationOrigin)
     );
+
+    if (this.on) {
+      this.led.fillColor = 0xff0000;
+    } else {
+      this.led.fillColor = 0x500000;
+    }
   }
 }
 
 class rgbLed {
   constructor(scene, reference, x, y, radius = 5) {
     this.reference = reference;
+    this.color = 0x808080;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
-    if (x >= 0) {
-      this.relAngle = Math.atan(y / x);
-    } else {
-      this.relAngle = Math.PI + Math.atan(y / x);
-    }
+    this.rotationOrigin = Math.atan2(y, x);
 
     this.rgb = scene.add
       .circle(reference.x + x, reference.y + y, radius, 0x808080)
@@ -295,16 +347,20 @@ class rgbLed {
   }
 
   setColor(color) {
-    this.rgb.fillColor = color;
+    this.color = color;
   }
 
   update() {
     this.rgb.setPosition(
       this.reference.x +
-        this.deltaOrigin * Math.cos(this.reference.rotation + this.relAngle),
+        this.deltaOrigin *
+          Math.cos(this.reference.rotation + this.rotationOrigin),
       this.reference.y +
-        this.deltaOrigin * Math.sin(this.reference.rotation + this.relAngle)
+        this.deltaOrigin *
+          Math.sin(this.reference.rotation + this.rotationOrigin)
     );
+
+    this.rgb.fillColor = this.color;
   }
 }
 
@@ -326,6 +382,7 @@ class motor {
     this.power = 0;
     this.dir = 0;
     this.radius = height / 20;
+    this.angle = 0;
 
     if (powToSpeed === undefined) {
       this.powToSpeed = function (power) {
@@ -335,31 +392,26 @@ class motor {
       this.powToSpeed = powToSpeed;
     }
 
-    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
+    const deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
     const deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
 
-    this.rotationOrigin = Math.atan2(y, x);
-
-    this.rotationPoint1 = Math.atan2(point1.y, point1.x);
-    this.rotationPoint2 = Math.atan2(point2.y, point2.x);
+    const rotationOrigin = Math.atan2(y, x);
+    const rotationPoint1 = Math.atan2(point1.y, point1.x);
+    const rotationPoint2 = Math.atan2(point2.y, point2.x);
 
     this.wheel = scene.matter.add
       .gameObject(
         scene.add.rectangle(
-          reference.x +
-            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
-          reference.y +
-            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+          reference.x + deltaOrigin * Math.cos(rotationOrigin + robotRotation),
+          reference.y + deltaOrigin * Math.sin(rotationOrigin + robotRotation),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
-          reference.x +
-            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
-          reference.y +
-            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+          reference.x + deltaOrigin * Math.cos(rotationOrigin + robotRotation),
+          reference.y + deltaOrigin * Math.sin(rotationOrigin + robotRotation),
           width,
           height
         )
@@ -373,8 +425,8 @@ class motor {
         y: (height / 2) * Math.cos(-robotRotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(this.rotationPoint1 + robotRotation),
-        y: deltaPoint1 * Math.sin(this.rotationPoint1 + robotRotation),
+        x: deltaPoint1 * Math.cos(rotationPoint1 + robotRotation),
+        y: deltaPoint1 * Math.sin(rotationPoint1 + robotRotation),
       },
     });
 
@@ -384,8 +436,8 @@ class motor {
         y: (height / 2) * Math.cos(-robotRotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(this.rotationPoint2 + robotRotation),
-        y: deltaPoint2 * Math.sin(this.rotationPoint2 + robotRotation),
+        x: deltaPoint2 * Math.cos(rotationPoint2 + robotRotation),
+        y: deltaPoint2 * Math.sin(rotationPoint2 + robotRotation),
       },
     });
 
@@ -395,8 +447,8 @@ class motor {
         y: (-height / 2) * Math.cos(robotRotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(this.rotationPoint1 + robotRotation),
-        y: deltaPoint1 * Math.sin(this.rotationPoint1 + robotRotation),
+        x: deltaPoint1 * Math.cos(rotationPoint1 + robotRotation),
+        y: deltaPoint1 * Math.sin(rotationPoint1 + robotRotation),
       },
     });
 
@@ -406,8 +458,8 @@ class motor {
         y: (-height / 2) * Math.cos(robotRotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(this.rotationPoint2 + robotRotation),
-        y: deltaPoint2 * Math.sin(this.rotationPoint2 + robotRotation),
+        x: deltaPoint2 * Math.cos(rotationPoint2 + robotRotation),
+        y: deltaPoint2 * Math.sin(rotationPoint2 + robotRotation),
       },
     });
   }
@@ -416,7 +468,7 @@ class motor {
     if (power >= 0 && power <= 255) {
       this.dir = dir;
       this.power = power;
-      const speed = this.powToSpeed(power) * this.radius  * (12 / 100);
+      const speed = this.powToSpeed(power) * this.radius * (12 / 100);
 
       if (speed < 0) {
         speed = 0;
@@ -433,10 +485,22 @@ class motor {
   }
 
   update() {
+    const deltaX = this.wheel.x - this.wheel.body.positionPrev.x,
+      deltaY = this.wheel.y - this.wheel.body.positionPrev.y,
+      rotationSpeed =
+        Math.round(
+          (Math.sqrt(deltaX ** 2 + deltaY ** 2) / this.radius) *
+            (100 / 12) *
+            5.6 *
+            100
+        ) / 100;
+
+    this.angle += Math.round((rotationSpeed / Math.PI) * 2 * 80);
+
     this.wheel.body.positionImpulse.x =
-      (Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed);
+      Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed;
 
     this.wheel.body.positionImpulse.y =
-      (Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed);
+      Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed;
   }
 }

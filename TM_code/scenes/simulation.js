@@ -30,7 +30,7 @@ class Simul extends Phaser.Scene {
     this.mapCreate(this);
 
     this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
-    
+
     this.scene.launch("overlay", [this.robots, this.cameras.main]);
   }
 

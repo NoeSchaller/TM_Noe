@@ -77,6 +77,10 @@ class maqueenPlus {
     scene.robots.push(this);
   }
 
+  getDistance(){
+    return this.ultrasonic.getDistance()
+  }
+
   update() {
     this.Lmotor.update();
     this.Rmotor.update();

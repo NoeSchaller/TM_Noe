@@ -35,7 +35,8 @@ class markCircle {
     this.scale = { x: 1, y: 1 };
     this.angle = 0;
     this.body = scene.matter.add
-      .gameObject(scene.add.circle(x, y, radius, 0x000000))
+      .gameObject(scene.add.circle(x, y, radius, 0x000000),
+      scene.matter.add.circle(x, y, radius))
       .setCollidesWith(0);
 
     scene.marks.push(this);

@@ -34,7 +34,10 @@ class wallCircle {
     this.scale = { x: 1, y: 1 };
     this.angle = 0;
     this.body = scene.matter.add
-      .gameObject(scene.add.circle(x, y, radius, 0xff0000))
+      .gameObject(
+        scene.add.circle(x, y, radius, 0xff0000),
+        scene.matter.add.circle(x, y, radius)
+      )
       .setStatic(true)
       .setFriction(1);
 
