@@ -59,27 +59,6 @@ class i2cPlus {
       } else if (register == 0x0c) {
         const colorR = this.colors[byte[1] - 1];
         this.robot.RLed.setColor(colorR);
-      } else if (register == 0x1d) {
-        let octet = 0;
-        if (this.robot.irL3.isMarked()) {
-          octet += 32;
-        }
-        if (this.robot.irL2.isMarked()) {
-          octet += 16;
-        }
-        if (this.robot.irL1.isMarked()) {
-          octet += 8;
-        }
-        if (this.robot.irR1.isMarked()) {
-          octet += 4;
-        }
-        if (this.robot.irR2.isMarked()) {
-          octet += 2;
-        }
-        if (this.robot.irR3.isMarked()) {
-          octet += 1;
-        }
-        this.buffer.push(octet);
       }
 
       // gestion des ir
@@ -253,33 +232,24 @@ class infra {
     for (let i = 0; i < this.scene.marks.length; i++) {
       if (this.scene.matter.overlap(this.ir, this.scene.marks[i].body)) {
         const mark = this.scene.marks[i];
-        if (mark.pic == "geom") {
-          return true;
+        if (mark.picture == "geom") {
+          return this.StateBlack;
         }
         const color = this.scene.textures.getPixel(
           (this.ir.x - mark.position.x + (mark.body.width * mark.scale.x) / 2) /
             mark.scale.x,
           (this.ir.y - mark.position.y + (mark.body.width * mark.scale.y) / 2) /
             mark.scale.y,
-          mark.pic
+          mark.picture
         );
-        if (color == null) {
-        } else {
-          if ((color.v < 0.2) & (color.a != 0)) {
-            if (this.StateBlack) {
-              return true;
-            } else {
-              return false;
-            }
+        if (color !== null) {
+          if (color.v < 0.3) {
+            return this.StateBlack;
           }
         }
       }
     }
-    if (this.StateBlack) {
-      return false;
-    } else {
-      return true;
-    }
+    return !this.StateBlack;
   }
 
   update() {

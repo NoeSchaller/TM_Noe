@@ -30,7 +30,7 @@ class markRect {
 
 class markCircle {
   constructor(scene, x, y, radius) {
-    this.pic = "geom";
+    this.picture = "geom";
     this.position = { x: x, y: y };
     this.scale = { x: 1, y: 1 };
     this.angle = 0;
@@ -60,7 +60,7 @@ class markCircle {
 
 class Picture {
   constructor(scene, key, x, y, scaleX = 1, scaleY = 1) {
-    this.pic = key;
+    this.picture = key;
     this.position = { x: x, y: y };
     this.scale = { x: scaleX, y: scaleY };
     this.angle = 0;
