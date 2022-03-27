@@ -1,10 +1,10 @@
 class maqueenPlus {
   constructor(scene, name, x, y, angle) {
-    //mise  en place de variable utilisables plus tard
+    //mise  en place de variables
     this.name = name;
     this.type = "maqueenPlus";
 
-    //mise en place du "corps" du robot
+    //mise en place de l'élément body
     this.body = scene.matter.add
       .sprite(x, y, "plusBodyPic", undefined, {
         shape: scene.cache.json.get("plusShape").body,
@@ -70,7 +70,6 @@ class maqueenPlus {
     this.RLed = new rgbLed(scene, this.body, 20, -45);
 
     //mise en place de l'i2c
-
     this.i2c = new i2cPlus(this);
 
     // ajout du robot à la liste des robots

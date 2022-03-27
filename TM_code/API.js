@@ -23,10 +23,9 @@ class simulation {
           this.walls,
           this.marks,
           mapLoad,
-          mapCreate,
-          mode
+          mapCreate
         ),
-        new Over(this.robots, width, height),
+        new Over(),
       ],
       physics: {
         default: "matter",

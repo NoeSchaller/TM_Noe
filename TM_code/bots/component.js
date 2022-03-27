@@ -126,7 +126,6 @@ class i2cLite {
       } else if (register == 0x02) {
         const dirR = byte[1],
           pR = byte[2];
-        console.log(pR);
         this.robot.Rmotor.setSpeed(dirR, pR);
       }
     }
@@ -134,18 +133,18 @@ class i2cLite {
 }
 
 class pin {
-  constructor(robot, read, write) {
-    this.robot = robot;
+  constructor(component, read, write) {
+    this.component = component;
     this.read = read;
     this.write = write;
   }
 
   read_digital() {
-    return eval(this.read);
+    return eval(`this.component.${this.read}()`);
   }
 
   write_digital(set) {
-    eval(this.write.replace(")", String(set) + ")"));
+    eval(`this.component.${this.write}(${set})`);
   }
 }
 
@@ -286,6 +285,10 @@ class led {
     this.on = bool;
   }
 
+  getOn() {
+    return this.on;
+  }
+
   update() {
     this.led.setPosition(
       this.reference.x +
@@ -362,26 +365,26 @@ class motor {
       this.powToSpeed = powToSpeed;
     }
 
-    const deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
-    const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2);
-    const deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
+    this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
+    const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2),
+      deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
 
-    const rotationOrigin = Math.atan2(y, x);
-    const rotationPoint1 = Math.atan2(point1.y, point1.x);
-    const rotationPoint2 = Math.atan2(point2.y, point2.x);
+    this.rotationOrigin = Math.atan2(y, x);
+    const rotationPoint1 = Math.atan2(point1.y, point1.x),
+      rotationPoint2 = Math.atan2(point2.y, point2.x);
 
     this.wheel = scene.matter.add
       .gameObject(
         scene.add.rectangle(
-          reference.x + deltaOrigin * Math.cos(rotationOrigin + robotRotation),
-          reference.y + deltaOrigin * Math.sin(rotationOrigin + robotRotation),
+          reference.x + this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y + this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
-          reference.x + deltaOrigin * Math.cos(rotationOrigin + robotRotation),
-          reference.y + deltaOrigin * Math.sin(rotationOrigin + robotRotation),
+          reference.x + this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y + this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height
         )

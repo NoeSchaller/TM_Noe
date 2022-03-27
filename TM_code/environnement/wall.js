@@ -1,10 +1,10 @@
 class wallRect {
-  constructor(scene, x, y, width, heigth, angle = 0) {
+  constructor(scene, x, y, width, height, angle = 0) {
     this.position = { x: x, y: y };
     this.scale = { x: 1, y: 1 };
     this.angle = angle;
     this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, heigth, 0xff00000))
+      .gameObject(scene.add.rectangle(x, y, width, height, 0xff00000))
       .setStatic(true)
       .setAngle(angle);
 
