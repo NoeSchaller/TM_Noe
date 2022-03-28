@@ -18,7 +18,7 @@ class i2cPlus {
           const dirL = byte[1],
             pL = byte[2];
           this.robot.Lmotor.setSpeed(dirL, pL);
-        } else if (byte.length == 5) {
+        } else if (byte.length >= 5) {
           const dirL = byte[1],
             pL = byte[2],
             dirR = byte[3],
@@ -26,28 +26,30 @@ class i2cPlus {
           this.robot.Lmotor.setSpeed(dirL, pL);
           this.robot.Rmotor.setSpeed(dirR, pR);
         }
-        this.buffer.push(this.robot.Rmotor.power);
-        this.buffer.push(this.robot.Rmotor.dir);
-        this.buffer.push(this.robot.Lmotor.power);
-        this.buffer.push(this.robot.Lmotor.dir);
+        this.buffer.push(
+          this.robot.Rmotor.power,
+          this.robot.Rmotor.dir,
+          this.robot.Lmotor.power,
+          this.robot.Lmotor.dir
+        );
       } else if (register == 0x02) {
         const dirR = byte[1],
           pR = byte[2];
-        console.log(pR);
         this.robot.Rmotor.setSpeed(dirR, pR);
 
-        this.buffer.push(this.robot.Rmotor.power);
-        this.buffer.push(this.robot.Rmotor.dir);
+        this.buffer.push(this.robot.Rmotor.power, this.robot.Rmotor.dir);
       } else if (register == 0x04) {
-        this.buffer.push(this.robot.Rmotor.angle % 256);
-        this.buffer.push((this.robot.Rmotor.angle >> 8) % 256);
-        this.buffer.push(this.robot.Lmotor.angle % 256);
-        this.buffer.push((this.robot.Lmotor.angle >> 8) % 256);
+        this.buffer.push(
+          this.robot.Rmotor.angle % 256,
+          (this.robot.Rmotor.angle >> 8) % 256,
+          this.robot.Lmotor.angle % 256,
+          (this.robot.Lmotor.angle >> 8) % 256
+        );
       }
 
       //gestion des leds rgb
       else if (register == 0x0b) {
-        if (byte.length == 3) {
+        if (byte.length >= 3) {
           const colorL = this.colors[byte[1] - 1],
             colorR = this.colors[byte[2] - 1];
           this.robot.LLed.setColor(colorL);
@@ -57,8 +59,10 @@ class i2cPlus {
           this.robot.LLed.setColor(colorL);
         }
       } else if (register == 0x0c) {
-        const colorR = this.colors[byte[1] - 1];
-        this.robot.RLed.setColor(colorR);
+        if (byte.length >= 2) {
+          const colorR = this.colors[byte[1] - 1];
+          this.robot.RLed.setColor(colorR);
+        }
       }
 
       // gestion des ir
@@ -115,7 +119,7 @@ class i2cLite {
           const dirL = byte[1],
             pL = byte[2];
           this.robot.Lmotor.setSpeed(dirL, pL);
-        } else if (byte.length == 5) {
+        } else if (byte.length >= 5) {
           const dirL = byte[1],
             pL = byte[2],
             dirR = byte[3],
@@ -376,15 +380,19 @@ class motor {
     this.wheel = scene.matter.add
       .gameObject(
         scene.add.rectangle(
-          reference.x + this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
-          reference.y + this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+          reference.x +
+            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y +
+            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
-          reference.x + this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
-          reference.y + this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+          reference.x +
+            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+          reference.y +
+            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
           width,
           height
         )

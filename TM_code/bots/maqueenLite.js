@@ -3,6 +3,8 @@ class maqueenLite {
     //mise  en place de variables
     this.name = name;
     this.type = "maqueenLite";
+    this.angle = angle;
+    this.position = { x: x, y: y };
 
     //mise en place de l'élément body
     this.body = scene.matter.add
@@ -88,17 +90,27 @@ class maqueenLite {
     this.irR.update();
     this.LLed.update();
     this.RLed.update();
+    this.position = { x: this.body.x, y: this.body.y };
+    this.angle = this.body.angle;
   }
 
   setPosition(x, y) {
     this.body.setPosition(x, y);
     this.Lmotor.wheel.setPosition(
-      x + this.Lmotor.deltaOrigin * Math.cos(this.Lmotor.rotationOrigin),
-      y + this.Lmotor.deltaOrigin * Math.sin(this.Lmotor.rotationOrigin)
+      x +
+        this.Lmotor.deltaOrigin *
+          Math.cos(this.Lmotor.rotationOrigin + this.body.rotation),
+      y +
+        this.Lmotor.deltaOrigin *
+          Math.sin(this.Lmotor.rotationOrigin + this.body.rotation)
     );
     this.Rmotor.wheel.setPosition(
-      x + this.Rmotor.deltaOrigin * Math.cos(this.Rmotor.rotationOrigin),
-      y + this.Rmotor.deltaOrigin * Math.sin(this.Rmotor.rotationOrigin)
+      x +
+        this.Rmotor.deltaOrigin *
+          Math.cos(this.Rmotor.rotationOrigin + this.body.rotation),
+      y +
+        this.Rmotor.deltaOrigin *
+          Math.sin(this.Rmotor.rotationOrigin + this.body.rotation)
     );
   }
 

@@ -3,6 +3,8 @@ class maqueenPlus {
     //mise  en place de variables
     this.name = name;
     this.type = "maqueenPlus";
+    this.angle = angle;
+    this.position = { x: x, y: y };
 
     //mise en place de l'élément body
     this.body = scene.matter.add
@@ -25,7 +27,7 @@ class maqueenPlus {
     this.Lmotor = new motor(
       scene,
       this.body,
-      angle / 180 * Math.PI,
+      (angle / 180) * Math.PI,
       -45,
       27,
       9,
@@ -38,7 +40,7 @@ class maqueenPlus {
     this.Rmotor = new motor(
       scene,
       this.body,
-      angle / 180 * Math.PI,
+      (angle / 180) * Math.PI,
       45,
       27,
       9,
@@ -76,8 +78,8 @@ class maqueenPlus {
     scene.robots.push(this);
   }
 
-  getDistance(){
-    return this.ultrasonic.getDistance()
+  getDistance() {
+    return this.ultrasonic.getDistance();
   }
 
   update() {
@@ -92,17 +94,27 @@ class maqueenPlus {
     this.irR3.update();
     this.LLed.update();
     this.RLed.update();
+    this.position = { x: this.body.x, y: this.body.y };
+    this.angle = this.body.angle;
   }
 
   setPosition(x, y) {
     this.body.setPosition(x, y);
     this.Lmotor.wheel.setPosition(
-      x + this.Lmotor.delta * Math.cos(this.Lmotor.startAngle),
-      y + this.Lmotor.delta * Math.sin(this.Lmotor.startAngle)
+      x +
+        this.Lmotor.deltaOrigin *
+          Math.cos(this.Lmotor.rotationOrigin + this.body.rotation),
+      y +
+        this.Lmotor.deltaOrigin *
+          Math.sin(this.Lmotor.rotationOrigin + this.body.rotation)
     );
     this.Rmotor.wheel.setPosition(
-      x + this.Rmotor.delta * Math.cos(this.Rmotor.startAngle),
-      y + this.Rmotor.delta * Math.sin(this.Rmotor.startAngle)
+      x +
+        this.Rmotor.deltaOrigin *
+          Math.cos(this.Rmotor.rotationOrigin + this.body.rotation),
+      y +
+        this.Rmotor.deltaOrigin *
+          Math.sin(this.Rmotor.rotationOrigin + this.body.rotation)
     );
   }
 
@@ -111,21 +123,21 @@ class maqueenPlus {
 
     this.Lmotor.wheel.setPosition(
       this.body.x +
-        this.Lmotor.delta *
-          Math.cos((deg / 180) * Math.PI + this.Lmotor.relAngle),
+        this.Lmotor.deltaOrigin *
+          Math.cos((deg / 180) * Math.PI + this.Lmotor.rotationOrigin),
       this.body.y +
-        this.Lmotor.delta *
-          Math.sin((deg / 180) * Math.PI + this.Lmotor.relAngle)
+        this.Lmotor.deltaOrigin *
+          Math.sin((deg / 180) * Math.PI + this.Lmotor.rotationOrigin)
     );
     this.Lmotor.wheel.setAngle(deg);
 
     this.Rmotor.wheel.setPosition(
       this.body.x +
-        this.Rmotor.delta *
-          Math.cos((deg / 180) * Math.PI + this.Rmotor.relAngle),
+        this.Rmotor.deltaOrigin *
+          Math.cos((deg / 180) * Math.PI + this.Rmotor.rotationOrigin),
       this.body.y +
-        this.Rmotor.delta *
-          Math.sin((deg / 180) * Math.PI + this.Rmotor.relAngle)
+        this.Rmotor.deltaOrigin *
+          Math.sin((deg / 180) * Math.PI + this.Rmotor.rotationOrigin)
     );
     this.Rmotor.wheel.setAngle(deg);
   }

@@ -19,7 +19,7 @@ class markRect {
 
   setAngle(deg) {
     this.body.setAngle(deg);
-    this.angle = angle;
+    this.angle = deg;
   }
 
   setScale(x, y) {
@@ -49,7 +49,7 @@ class markCircle {
 
   setAngle(deg) {
     this.body.setAngle(deg);
-    this.angle = angle;
+    this.angle = deg;
   }
 
   setScale(x, y) {
