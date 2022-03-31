@@ -1,7 +1,0 @@
-echelle : 100px = 10cm
-
-controler les ir pour le Plus (si noir = true)
-
-`eventUpdate` 
-
-mark + walls + picture déplacable ?
