@@ -1,5 +1,5 @@
 class Over extends Phaser.Scene {
-  constructor(robots) {
+  constructor() {
     super("overlay");
   }
 
@@ -50,8 +50,8 @@ class Over extends Phaser.Scene {
         .setInteractive()
         .on("pointerdown", () => {
           this.keyboardControl = true;
-          this.cursor.setPosition(15 + this.buttons[0].width, 110),
-            this.camera.stopFollow();
+          this.cursor.setPosition(15 + this.buttons[0].width, 110);
+          this.camera.stopFollow();
         })
     );
 

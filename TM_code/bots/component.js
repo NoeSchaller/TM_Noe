@@ -238,11 +238,21 @@ class infra {
         if (mark.picture == "geom") {
           return this.StateBlack;
         }
+
+        const xAngle0 =
+            Math.cos(-(mark.angle / 180) * Math.PI) *
+              (this.ir.x - mark.position.x) -
+            Math.sin(-(mark.angle / 180) * Math.PI) *
+              (this.ir.y - mark.position.y),
+          yAngle0 =
+            Math.sin(-(mark.angle / 180) * Math.PI) *
+              (this.ir.x - mark.position.x) +
+            Math.cos(-(mark.angle / 180) * Math.PI) *
+              (this.ir.y - mark.position.y);
+
         const color = this.scene.textures.getPixel(
-          (this.ir.x - mark.position.x + (mark.body.width * mark.scale.x) / 2) /
-            mark.scale.x,
-          (this.ir.y - mark.position.y + (mark.body.width * mark.scale.y) / 2) /
-            mark.scale.y,
+          xAngle0 / mark.scale.x + mark.body.width / 2,
+          yAngle0 / mark.scale.y + mark.body.height / 2,
           mark.picture
         );
         if (color !== null) {
@@ -345,7 +355,6 @@ class motor {
   constructor(
     scene,
     reference,
-    robotRotation,
     x,
     y,
     width,
@@ -360,15 +369,7 @@ class motor {
     this.dir = 0;
     this.radius = height / 20;
     this.angle = 0;
-
-    if (powToSpeed === undefined) {
-      this.powToSpeed = function (power) {
-        return power;
-      };
-    } else {
-      this.powToSpeed = powToSpeed;
-    }
-
+    
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2),
       deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
@@ -381,66 +382,70 @@ class motor {
       .gameObject(
         scene.add.rectangle(
           reference.x +
-            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+            this.deltaOrigin *
+              Math.cos(this.rotationOrigin + reference.rotation),
           reference.y +
-            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+            this.deltaOrigin *
+              Math.sin(this.rotationOrigin + reference.rotation),
           width,
           height,
           0x808080
         ),
         scene.matter.add.rectangle(
           reference.x +
-            this.deltaOrigin * Math.cos(this.rotationOrigin + robotRotation),
+            this.deltaOrigin *
+              Math.cos(this.rotationOrigin + reference.rotation),
           reference.y +
-            this.deltaOrigin * Math.sin(this.rotationOrigin + robotRotation),
+            this.deltaOrigin *
+              Math.sin(this.rotationOrigin + reference.rotation),
           width,
           height
         )
       )
-      .setRotation(robotRotation)
+      .setRotation(reference.rotation)
       .setFrictionAir(3);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(-robotRotation),
-        y: (height / 2) * Math.cos(-robotRotation),
+        x: (height / 2) * Math.sin(-reference.rotation),
+        y: (height / 2) * Math.cos(-reference.rotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(rotationPoint1 + robotRotation),
-        y: deltaPoint1 * Math.sin(rotationPoint1 + robotRotation),
+        x: deltaPoint1 * Math.cos(rotationPoint1 + reference.rotation),
+        y: deltaPoint1 * Math.sin(rotationPoint1 + reference.rotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(-robotRotation),
-        y: (height / 2) * Math.cos(-robotRotation),
+        x: (height / 2) * Math.sin(-reference.rotation),
+        y: (height / 2) * Math.cos(-reference.rotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(rotationPoint2 + robotRotation),
-        y: deltaPoint2 * Math.sin(rotationPoint2 + robotRotation),
+        x: deltaPoint2 * Math.cos(rotationPoint2 + reference.rotation),
+        y: deltaPoint2 * Math.sin(rotationPoint2 + reference.rotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(robotRotation),
-        y: (-height / 2) * Math.cos(robotRotation),
+        x: (height / 2) * Math.sin(reference.rotation),
+        y: (-height / 2) * Math.cos(reference.rotation),
       },
       pointB: {
-        x: deltaPoint1 * Math.cos(rotationPoint1 + robotRotation),
-        y: deltaPoint1 * Math.sin(rotationPoint1 + robotRotation),
+        x: deltaPoint1 * Math.cos(rotationPoint1 + reference.rotation),
+        y: deltaPoint1 * Math.sin(rotationPoint1 + reference.rotation),
       },
     });
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
       pointA: {
-        x: (height / 2) * Math.sin(robotRotation),
-        y: (-height / 2) * Math.cos(robotRotation),
+        x: (height / 2) * Math.sin(reference.rotation),
+        y: (-height / 2) * Math.cos(reference.rotation),
       },
       pointB: {
-        x: deltaPoint2 * Math.cos(rotationPoint2 + robotRotation),
-        y: deltaPoint2 * Math.sin(rotationPoint2 + robotRotation),
+        x: deltaPoint2 * Math.cos(rotationPoint2 + reference.rotation),
+        y: deltaPoint2 * Math.sin(rotationPoint2 + reference.rotation),
       },
     });
   }

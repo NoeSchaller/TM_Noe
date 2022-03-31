@@ -3,7 +3,7 @@ function mapLoad(scene) {
 }
 
 function mapCreate(scene) {
-  new Picture(scene, "csud", 400, 100, 2, 3);
+  new Picture(scene, "csud", 400, 100);
 
   new wallRect(scene, 100, 200, 50, 200, 80);
 

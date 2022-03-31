@@ -28,7 +28,6 @@ class maqueenLite {
     this.Lmotor = new motor(
       scene,
       this.body,
-      (angle / 180) * Math.PI,
       -35,
       18,
       9,
@@ -41,7 +40,6 @@ class maqueenLite {
     this.Rmotor = new motor(
       scene,
       this.body,
-      (angle / 180) * Math.PI,
       35,
       18,
       9,

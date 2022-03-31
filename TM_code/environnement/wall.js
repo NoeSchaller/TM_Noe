@@ -23,7 +23,9 @@ class wallRect {
   }
 
   setScale(x, y) {
+    this.body.setAngle(0)
     this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
     this.scale = { x: x, y: y };
   }
 }
@@ -56,7 +58,9 @@ class wallCircle {
   }
 
   setScale(x, y) {
+    this.body.setAngle(0)
     this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
     this.scale = { x: x, y: y };
   }
 }

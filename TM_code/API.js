@@ -5,8 +5,7 @@ class simulation {
     id,
     mapLoad,
     mapCreate,
-    background = 0xcccac0,
-    mode = 0
+    background = 0xcccac0
   ) {
     this.robots = [];
     this.walls = [];
