@@ -345,7 +345,7 @@ class ultrasonicD {
     this.reference = reference;
     this.scene = scene;
     this.range = range;
-    this.angle = (angle / 180) * Math.PI;
+    this.rotation = (angle / 180) * Math.PI;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     this.rotationOrigin = Math.atan2(y, x);
 
@@ -361,7 +361,7 @@ class ultrasonicD {
         collisionRange: range * 10,
       })
       .setConeDeg(coneAngle)
-      .setAngle(reference.rotation + Math.PI / 2 + this.angle);
+      .setAngle(reference.rotation + Math.PI / 2 + this.rotation);
 
     this.rayCone.enablePhysics("matter");
 
@@ -398,7 +398,7 @@ class ultrasonicD {
           this.deltaOrigin *
             Math.sin(this.reference.rotation + this.rotationOrigin)
       )
-      .setAngle(this.reference.rotation - Math.PI / 2 + this.angle);
+      .setAngle(this.reference.rotation - Math.PI / 2 + this.rotation);
   }
 }
 
