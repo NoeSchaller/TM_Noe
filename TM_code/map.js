@@ -1,7 +1,19 @@
 function mapLoad(scene) {
+  scene.load.image("csud", "assets/irTest.png");
 }
 
 function mapCreate(scene) {
-new wallRect(scene, 261.4999714914987,218.99997772217023,46.999995218913256,101.9999896240245)
-new markRect(scene, 348.4999626414019,397.4999595642131,78.99999196370527,78.99999196370521)
+  new Picture(scene, "csud", 400, 100);
+
+  new wallRect(scene, 100, 200, 50, 200, 80);
+
+  new wallCircle(scene, 500, 400, 50);
+
+  new markRect(scene, 400, 500, 100, 100, 70);
+
+  new markCircle(scene, 200, 500, 20);
+
+  new maqueenPlus(scene, "N°1", 300, 300, 0);
+
+  new maqueenLite(scene, "N°2", 400, 300, 90);
 }
