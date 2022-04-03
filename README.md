@@ -1,14 +1,3 @@
 # Installation
 
-Pour mettre en place les documents du simulateur il suffit simplement de télécharger les fichiers du dépôt github et de les laisser dans la même disposition où ils sont déjà.
-
-# Lancement
-
-Pour lancer ce travail il existe le fichier index.html, toutefois simplement ouvrir ce document ne fonctionne pas. En effet comme les fichiers sont sur la mémoire de l'ordinateur et non pas sur un serveur, le navigateur ne permet pas à index.html d'accéder aux fichiers externes. Afin de palier à ce problème, il faut utiliser Visual Studio Code, le programme possède une extension appelée live server qui permet de reproduire le comportement d'un serveur. Il suffit donc d'installer cette extension et de lancer index.html avec (clique droit depuis Visual Studio Code puis "lancer avec live server"). Une simulation de démonstration se lance alors, il est possible  alors d'expérimenter en modifiant le document "map.json", "main.js" ou via la console du navigateur.
-```{admonition} Avertissement
----
-class: warning
----
-Pour l'instant la vitesse des moteurs n'est pas encore ajuster, une valeure supérieure et il n'est généralement pas nécéssaire d'introduire une valeure excédant 5.  
-De plus, pour des raisons pratique il est actuellement possible de déplacer le premier robot de la liste à l'aide de la souris, cela ne sera bien évidemment plus le cas dans la version finale du travail
-```
+Tout les documents nécéssaire à la mise en place de la simulation sont disponibles dans la branche `main` du dépot github dédié à ce travail[^git]. Pour pouvoir utiliser le simulateur il suffit de télécherger tout les documents du dossier `TM_code` puis d'ajouter au code HTML de la page les fichiers `phaser.js`, `rayCasting.js` et `MaqueenSimulation.js` dans cet ordre. Il est également important de les ajouter à la fin du ficher HTML afin d'être sûr que l'élément `canvas` dans lequel la simulation est créer existe lorsque le script est exécuté. Il faut également être attentif à laisser le dossier `assets` dans le même document que `MaqueenSimulation.js`. Une fois ces étape effectuée il est possible d'initialiser la simulation. La documentation est disponibel dans ce dépot: https://github.com/NoeSchaller/sphinx-tm-template
