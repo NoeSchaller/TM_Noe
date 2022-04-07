@@ -12,6 +12,7 @@ class maqueenLite {
         shape: scene.cache.json.get("liteShape").body,
       })
       .setFrictionAir(0)
+      .setDepth(2)
       .setAngle(angle);
 
     //mise en place des moteurs

@@ -403,6 +403,7 @@ class motor {
         )
       )
       .setRotation(reference.rotation)
+      .setDepth(2)
       .setFrictionAir(3);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {

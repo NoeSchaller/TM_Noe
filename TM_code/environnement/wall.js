@@ -4,7 +4,7 @@ class wallRect {
     this.scale = { x: 1, y: 1 };
     this.angle = angle;
     this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0xff00000))
+      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
       .setStatic(true)
       .setAngle(angle);
 
@@ -62,5 +62,23 @@ class wallCircle {
     this.body.setScale(x, y);
     this.body.setAngle(this.angle);
     this.scale = { x: x, y: y };
+  }
+}
+
+class wallPoly{
+  constructor(scene, x, y, points){
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(
+        scene.add.polygon(x, y, points, 0xff0000),
+        {shape: { type: "fromVerts", verts: points, flagInternal: true}}
+      )
+      .setStatic(true)
+      .setFriction(1);
+
+    scene.walls.push(this);
+    scene.RaycasterDomain.push(this.body);
   }
 }

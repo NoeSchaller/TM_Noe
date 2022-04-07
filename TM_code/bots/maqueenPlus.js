@@ -12,6 +12,7 @@ class maqueenPlus {
         shape: scene.cache.json.get("plusShape").body,
       })
       .setFrictionAir(0)
+      .setDepth(2)
       .setAngle(angle);
 
     //mise en place des moteurs

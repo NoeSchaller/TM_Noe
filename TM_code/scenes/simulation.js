@@ -1,11 +1,12 @@
 class Simul extends Phaser.Scene {
-  constructor(robots, walls, marks, mapLoad, mapCreate) {
+  constructor(robots, walls, marks, zones, mapLoad, mapCreate) {
     super("simulation");
     this.mapLoad = mapLoad;
     this.mapCreate = mapCreate;
     this.robots = robots;
     this.walls = walls;
     this.marks = marks;
+    this.zones = zones;
   }
 
   preload() {
@@ -35,6 +36,11 @@ class Simul extends Phaser.Scene {
   }
 
   update() {
+
+    for (let i = 0; i < this.zones.length; i++) {
+      this.zones[i].update();
+    }
+
     for (let i = 0; i < this.robots.length; i++) {
       this.robots[i].update();
     }

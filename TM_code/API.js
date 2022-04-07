@@ -10,6 +10,7 @@ class simulation {
     this.robots = [];
     this.walls = [];
     this.marks = [];
+    this.zones = [];
     this.game = new Phaser.Game({
       width: width,
       height: height,
@@ -21,6 +22,7 @@ class simulation {
           this.robots,
           this.walls,
           this.marks,
+          this.zones,
           mapLoad,
           mapCreate
         ),
@@ -30,7 +32,7 @@ class simulation {
         default: "matter",
         matter: {
           gravity: { y: 0, x: 0 },
-          debug: 0,
+          debug: 1,
         },
       },
       plugins: {
