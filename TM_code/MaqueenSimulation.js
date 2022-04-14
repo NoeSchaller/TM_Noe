@@ -693,6 +693,7 @@ class maqueenLite {
         shape: scene.cache.json.get("liteShape").body,
       })
       .setFrictionAir(0)
+      .setDepth(2)
       .setAngle(angle);
 
     //mise en place des moteurs
@@ -832,6 +833,7 @@ class maqueenPlus {
         shape: scene.cache.json.get("plusShape").body,
       })
       .setFrictionAir(0)
+      .setDepth(2)
       .setAngle(angle);
 
     //mise en place des moteurs
@@ -1066,7 +1068,7 @@ class wallRect {
     this.scale = { x: 1, y: 1 };
     this.angle = angle;
     this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0xff00000))
+      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
       .setStatic(true)
       .setAngle(angle);
 
