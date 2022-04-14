@@ -80,6 +80,7 @@ class Over extends Phaser.Scene {
     if (this.robots.length !== 0) {
       this.keyboardControl = false;
       this.cursor.setPosition(15 + this.buttons[1].width, 140);
+      this.camera.startFollow(this.robots[0].body)
     } else {
       this.keyboardControl = true;
       this.cursor.setPosition(15 + this.buttons[0].width, 113);

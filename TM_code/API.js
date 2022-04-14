@@ -32,7 +32,7 @@ class simulation {
         default: "matter",
         matter: {
           gravity: { y: 0, x: 0 },
-          debug: 1,
+          debug: 0,
         },
       },
       plugins: {

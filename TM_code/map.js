@@ -5,5 +5,5 @@ function mapLoad(scene) {
 function mapCreate(scene) {
   new maqueenPlus(scene, "N°1", 300, 300, 0);
 
-  new wallPoly(scene, 250, 250, "0 0 40 0 10 10 40 10 10 20 40 20 10 30 0 0")
+  new wallPic(scene, "csud", 50, 200, 5);
 }
