@@ -9,15 +9,15 @@ function mapLoad(scene) {
 
 function mapCreate(scene) {
   new maqueenLite(scene, "N°1", 200, -100, 90);
-  new markPic(scene, "trail", 300, 300, 0, 2, 2);
-new wallCircle(scene, 200, 200, 100)
+  new Picture(scene, "trail", 300, 300, 0, 2, 2);
+  new wallCircle(scene, 200, 200, 100);
   new zoneRect(scene, 250, 700, 200, 50, 90, function (robot, zone) {
-    robot.setPosition(-1550, -1200)
-    robot.setAngle(0)
-    
-    new markPic(scene, "trail2", -1500, -1500, 0, 3, 3)
+    robot.setPosition(-1550, -1200);
+    robot.setAngle(0);
 
-    zone.setPosition(-1500, -1500)
+    new markPic(scene, "trail2", -1500, -1500, 0, 3, 3);
+
+    zone.setPosition(-1500, -1500);
   });
 }
 

@@ -8,7 +8,7 @@ function mapLoad(scene) {
 
 function mapCreate(scene) {
   new maqueenLite(scene, "N°1", 200, -100, 90);
-  new markPic(scene, "trail", 300, 300, 0, 2, 2);
+  new Picture(scene, "trail", 300, 300, 0, 2, 2);
 }
 
 sim = new simulation(400, 400, "simulation", mapLoad, mapCreate, 0.5, 1);

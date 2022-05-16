@@ -1,373 +1,219 @@
-class markRect {
-  constructor(scene, x, y, width, height, angle = 0) {
-    this.picture = "geom";
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = angle;
-    this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0x000000))
-      .setCollidesWith(0)
-      .setAngle(angle);
-
-    scene.marks.push(this);
-  }
-
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class markCircle {
-  constructor(scene, x, y, radius) {
-    this.picture = "geom";
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(
-        scene.add.circle(x, y, radius, 0x000000),
-        scene.matter.add.circle(x, y, radius)
-      )
-      .setCollidesWith(0);
-
-    scene.marks.push(this);
-  }
-
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class markPoly {
-  constructor(scene, x, y, points) {
-    this.picture = "geom";
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(scene.add.polygon(x, y, points, 0x000000), {
-        shape: { type: "fromVerts", verts: points, flagInternal: true },
-      })
-      .setStatic(true)
-      .setCollidesWith(0);
-
-    scene.marks.push(this);
-  }
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class markPic {
-  constructor(scene, key, x, y, angle = 0, scaleX = 1, scaleY = 1) {
-    this.picture = key;
-    this.position = { x: x, y: y };
-    this.scale = { x: scaleX, y: scaleY };
-    this.angle = angle;
-    this.body = scene.matter.add
-      .image(x, y, key)
-      .setCollidesWith(0)
-      .setScale(scaleX, scaleY)
-      .setAngle(angle);
-
-    scene.marks.push(this);
-  }
-
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class wallRect {
-  constructor(scene, x, y, width, height, angle = 0) {
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = angle;
-    this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
-      .setStatic(true)
-      .setAngle(angle);
-
-    scene.walls.push(this);
-    scene.RaycasterDomain.push(this.body);
-  }
-
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class wallCircle {
-  constructor(scene, x, y, radius) {
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(
-        scene.add.circle(x, y, radius, 0xff0000),
-        scene.matter.add.circle(x, y, radius)
-      )
-      .setStatic(true)
-      .setFriction(1);
-
-    scene.walls.push(this);
-    scene.RaycasterDomain.push(this.body);
-  }
-
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class wallPoly {
-  constructor(scene, x, y, points) {
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
-        shape: { type: "fromVerts", verts: points, flagInternal: true },
-      })
-      .setStatic(true)
-      .setFriction(1);
-
-    scene.walls.push(this);
-    scene.RaycasterDomain.push(this.body);
-  }
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
-
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
-
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
-}
-
-class zoneRect {
+class simulation {
   constructor(
-    scene,
-    x,
-    y,
     width,
     height,
-    angle,
-    callback,
-    color = 0xff0000,
-    alpha = 0.3
+    id,
+    mapLoad,
+    mapCreate,
+    zoom = 0.8,
+    mouse = true,
+    debug = false,
+    background = 0xcccac0
   ) {
-    this.scene = scene;
-    this.callback = callback;
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = angle;
-    this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height))
-      .setStatic(true)
-      .setCollidesWith(0)
-      .setAngle(angle)
-      .setFillStyle(color, alpha);
+    this.robots = [];
+    this.walls = [];
+    this.marks = [];
+    this.zones = [];
+    this.game = new Phaser.Game({
+      width: width,
+      height: height,
+      backgroundColor: background,
+      type: Phaser.WEBGL,
+      canvas: document.getElementById(id),
+      scene: [
+        new Simul(
+          this.robots,
+          this.walls,
+          this.marks,
+          this.zones,
+          mapLoad,
+          mapCreate,
+          mouse
+        ),
+        new Over(height, zoom),
+      ],
+      physics: {
+        default: "matter",
+        matter: {
+          gravity: { y: 0, x: 0 },
+          debug: debug,
+        },
+      },
+      plugins: {
+        scene: [
+          {
+            key: "PhaserRaycaster",
+            plugin: PhaserRaycaster,
+            mapping: "raycasterPlugin",
+          },
+        ],
+      },
+    });
+  }
+}
 
-    scene.zones.push(this);
+class Simul extends Phaser.Scene {
+  constructor(robots, walls, marks, zones, mapLoad, mapCreate, mouse) {
+    super("simulation");
+    this.mapLoad = mapLoad;
+    this.mapCreate = mapCreate;
+    this.robots = robots;
+    this.walls = walls;
+    this.marks = marks;
+    this.zones = zones;
+    this.mouse = mouse;
   }
 
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
+  preload() {
+    this.load.json("liteShape", "assets/liteShape.json");
+    this.load.json("plusShape", "assets/plusShape.json");
+
+    this.load.spritesheet("liteBodyPic", "assets/liteBody.png", {
+      frameWidth: 80,
+      frameHeight: 80,
+    });
+    this.load.spritesheet("plusBodyPic", "assets/plusBody.png", {
+      frameWidth: 100,
+      frameHeight: 103,
+    });
+
+    this.mapLoad(this);
   }
 
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
+  create() {
+    this.RaycasterDomain = [];
 
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
+    this.mapCreate(this);
+
+    if (this.mouse) {
+      this.matter.add.mouseSpring({ stiffness: 0.001 }).constraint;
+    }
+
+    this.scene.launch("overlay", [this.robots, this.cameras.main]);
   }
 
   update() {
-    for (let i = 0; i < this.scene.robots.length; i++) {
-      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
-        this.callback(this.scene.robots[i], this);
-      }
+    for (let i = 0; i < this.zones.length; i++) {
+      this.zones[i].update();
+    }
+
+    for (let i = 0; i < this.robots.length; i++) {
+      this.robots[i].update();
     }
   }
 }
 
-class zoneCircle {
-  constructor(scene, x, y, radius, callback, color = 0xff0000, alpha = 0.3) {
-    this.scene = scene;
-    this.callback = callback;
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(
-        scene.add.circle(x, y, radius),
-        scene.matter.add.circle(x, y, radius)
-      )
-      .setStatic(true)
-      .setCollidesWith(0)
-      .setFillStyle(color, alpha);
-
-    scene.zones.push(this);
+class Over extends Phaser.Scene {
+  constructor(height, zoom) {
+    super("overlay");
+    this.height = height
+    this.initZoom = zoom;
   }
 
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
+  init(data) {
+    this.robots = data[0];
+    this.camera = data[1];
   }
 
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
+  preload() {
+    this.load.image("echelle", "assets/scale.png");
   }
 
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
-  }
+  create() {
+    this.buttons = [];
+    this.echelle = this.add.image(70, (this.height-30), "echelle").setScale(this.initZoom);
+    this.camera.zoom = this.initZoom;
 
-  update() {
-    for (let i = 0; i < this.scene.robots.length; i++) {
-      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
-        this.callback();
-      }
-    }
-  }
-}
-
-class zonePoly {
-  constructor(scene, x, y, points, callback, color = 0xff0000, alpha = 0.3) {
-    this.scene = scene;
-    this.callback = callback;
-    this.activated = false;
-    this.position = { x: x, y: y };
-    this.scale = { x: 1, y: 1 };
-    this.angle = 0;
-    this.body = scene.matter.add
-      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
-        shape: { type: "fromVerts", verts: points, flagInternal: true },
+    this.add
+      .text(10, 60, "-", {
+        color: "#000",
+        backgroundColor: "#fff",
+        padding: 1,
+        fontSize: 40,
       })
-      .setStatic(true)
-      .setCollidesWith(0)
-      .setFillStyle(color, alpha);
+      .setInteractive()
+      .on("pointerdown", () => {
+        (this.camera.zoom /= 1.2), (this.echelle.scale /= 1.2);
+      });
 
-    scene.zones.push(this);
-  }
+    this.add
+      .text(10, 10, "+", {
+        color: "#000",
+        backgroundColor: "#fff",
+        padding: 1,
+        fontSize: 40,
+      })
+      .setInteractive()
+      .on("pointerdown", () => {
+        (this.camera.zoom *= 1.2), (this.echelle.scale *= 1.2);
+      });
 
-  setPosition(x, y) {
-    this.body.setPosition(x, y);
-    this.position = { x: x, y: y };
-  }
+    this.buttons.push(
+      this.add
+        .text(10, 110, "Free", {
+          color: "#000",
+          backgroundColor: "#999",
+          padding: 3,
+        })
+        .setInteractive()
+        .on("pointerdown", () => {
+          this.keyboardControl = true;
+          this.cursor.setPosition(15 + this.buttons[0].width, 110);
+          this.camera.stopFollow();
+        })
+    );
 
-  setAngle(deg) {
-    this.body.setAngle(deg);
-    this.angle = deg;
-  }
+    for (let i = 0; i < this.robots.length; i++) {
+      this.buttons.push(
+        this.add
+          .text(10, 140 + 30 * i, this.robots[i].name, {
+            color: "#000",
+            backgroundColor: "#999",
+            padding: 3,
+          })
+          .setInteractive()
+          .on("pointerdown", () => {
+            this.keyboardControl = false;
+            this.cursor.setPosition(
+              15 + this.buttons[i + 1].width,
+              140 + 30 * i
+            );
+            this.camera.startFollow(this.robots[i].body);
+          })
+      );
+    }
 
-  setScale(x, y) {
-    this.body.setAngle(0);
-    this.body.setScale(x, y);
-    this.body.setAngle(this.angle);
-    this.scale = { x: x, y: y };
+    this.cursor = this.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
+
+    if(this.robots.length == 0){
+    this.keyboardControl = true;
+    this.cursor.setPosition(15 + this.buttons[0].width, 113);
+    } else {
+      this.keyboardControl = false
+      this.cursor.setPosition(15 + this.buttons[1].width, 140);
+      this.camera.startFollow(this.robots[0].body)
+    }
   }
 
   update() {
-    for (let i = 0; i < this.scene.robots.length; i++) {
-      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
-        this.callback(this, this.scene.robots[i]);
+    if (this.keyboardControl) {
+      const inputs = this.input.keyboard.addKeys({
+        up: "up",
+        down: "down",
+        left: "left",
+        right: "right",
+      });
+
+      if (inputs.up.isDown) {
+        this.camera.scrollY -= 5 / this.camera.zoom;
+      } else if (inputs.down.isDown) {
+        this.camera.scrollY += 5 / this.camera.zoom;
+      }
+
+      if (inputs.left.isDown) {
+        this.camera.scrollX -= 5 / this.camera.zoom;
+      } else if (inputs.right.isDown) {
+        this.camera.scrollX += 5 / this.camera.zoom;
       }
     }
   }
@@ -1152,223 +998,381 @@ class maqueenPlus {
   }
 }
 
-class Simul extends Phaser.Scene {
-  constructor(robots, walls, marks, zones, mapLoad, mapCreate, mouse) {
-    super("simulation");
-    this.mapLoad = mapLoad;
-    this.mapCreate = mapCreate;
-    this.robots = robots;
-    this.walls = walls;
-    this.marks = marks;
-    this.zones = zones;
-    this.mouse = mouse;
+class markRect {
+  constructor(scene, x, y, width, height, angle = 0) {
+    this.picture = "geom";
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .gameObject(scene.add.rectangle(x, y, width, height, 0x000000))
+      .setCollidesWith(0)
+      .setAngle(angle);
+
+    scene.marks.push(this);
   }
 
-  preload() {
-    this.load.json("liteShape", "assets/liteShape.json");
-    this.load.json("plusShape", "assets/plusShape.json");
-
-    this.load.spritesheet("liteBodyPic", "assets/liteBody.png", {
-      frameWidth: 80,
-      frameHeight: 80,
-    });
-    this.load.spritesheet("plusBodyPic", "assets/plusBody.png", {
-      frameWidth: 100,
-      frameHeight: 103,
-    });
-
-    this.mapLoad(this);
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
   }
 
-  create() {
-    this.RaycasterDomain = [];
-
-    this.mapCreate(this);
-
-    if (this.mouse) {
-      this.matter.add.mouseSpring({ stiffness: 0.001 }).constraint;
-    }
-
-    this.scene.launch("overlay", [this.robots, this.cameras.main]);
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
   }
 
-  update() {
-    for (let i = 0; i < this.zones.length; i++) {
-      this.zones[i].update();
-    }
-
-    for (let i = 0; i < this.robots.length; i++) {
-      this.robots[i].update();
-    }
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
   }
 }
 
-class Over extends Phaser.Scene {
-  constructor(height, zoom) {
-    super("overlay");
-    this.height = height
-    this.initZoom = zoom;
+class markCircle {
+  constructor(scene, x, y, radius) {
+    this.picture = "geom";
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(
+        scene.add.circle(x, y, radius, 0x000000),
+        scene.matter.add.circle(x, y, radius)
+      )
+      .setCollidesWith(0);
+
+    scene.marks.push(this);
   }
 
-  init(data) {
-    this.robots = data[0];
-    this.camera = data[1];
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
   }
 
-  preload() {
-    this.load.image("echelle", "assets/scale.png");
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
   }
 
-  create() {
-    this.buttons = [];
-    this.echelle = this.add.image(70, (this.height-30), "echelle").setScale(this.initZoom);
-    this.camera.zoom = this.initZoom;
-
-    this.add
-      .text(10, 60, "-", {
-        color: "#000",
-        backgroundColor: "#fff",
-        padding: 1,
-        fontSize: 40,
-      })
-      .setInteractive()
-      .on("pointerdown", () => {
-        (this.camera.zoom /= 1.2), (this.echelle.scale /= 1.2);
-      });
-
-    this.add
-      .text(10, 10, "+", {
-        color: "#000",
-        backgroundColor: "#fff",
-        padding: 1,
-        fontSize: 40,
-      })
-      .setInteractive()
-      .on("pointerdown", () => {
-        (this.camera.zoom *= 1.2), (this.echelle.scale *= 1.2);
-      });
-
-    this.buttons.push(
-      this.add
-        .text(10, 110, "Free", {
-          color: "#000",
-          backgroundColor: "#999",
-          padding: 3,
-        })
-        .setInteractive()
-        .on("pointerdown", () => {
-          this.keyboardControl = true;
-          this.cursor.setPosition(15 + this.buttons[0].width, 110);
-          this.camera.stopFollow();
-        })
-    );
-
-    for (let i = 0; i < this.robots.length; i++) {
-      this.buttons.push(
-        this.add
-          .text(10, 140 + 30 * i, this.robots[i].name, {
-            color: "#000",
-            backgroundColor: "#999",
-            padding: 3,
-          })
-          .setInteractive()
-          .on("pointerdown", () => {
-            this.keyboardControl = false;
-            this.cursor.setPosition(
-              15 + this.buttons[i + 1].width,
-              140 + 30 * i
-            );
-            this.camera.startFollow(this.robots[i].body);
-          })
-      );
-    }
-
-    this.cursor = this.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
-
-    if(this.robots.length == 0){
-    this.keyboardControl = true;
-    this.cursor.setPosition(15 + this.buttons[0].width, 113);
-    } else {
-      this.keyboardControl = false
-      this.cursor.setPosition(15 + this.buttons[1].width, 140);
-      this.camera.startFollow(this.robots[0].body)
-    }
-  }
-
-  update() {
-    if (this.keyboardControl) {
-      const inputs = this.input.keyboard.addKeys({
-        up: "up",
-        down: "down",
-        left: "left",
-        right: "right",
-      });
-
-      if (inputs.up.isDown) {
-        this.camera.scrollY -= 5 / this.camera.zoom;
-      } else if (inputs.down.isDown) {
-        this.camera.scrollY += 5 / this.camera.zoom;
-      }
-
-      if (inputs.left.isDown) {
-        this.camera.scrollX -= 5 / this.camera.zoom;
-      } else if (inputs.right.isDown) {
-        this.camera.scrollX += 5 / this.camera.zoom;
-      }
-    }
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
   }
 }
 
-class simulation {
+class markPoly {
+  constructor(scene, x, y, points) {
+    this.picture = "geom";
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0x000000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setCollidesWith(0);
+
+    scene.marks.push(this);
+  }
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class Picture {
+  constructor(scene, key, x, y, angle = 0, scaleX = 1, scaleY = 1) {
+    this.picture = key;
+    this.position = { x: x, y: y };
+    this.scale = { x: scaleX, y: scaleY };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .image(x, y, key)
+      .setCollidesWith(0)
+      .setScale(scaleX, scaleY)
+      .setAngle(angle);
+
+    scene.marks.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class wallRect {
+  constructor(scene, x, y, width, height, angle = 0) {
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
+      .setStatic(true)
+      .setAngle(angle);
+
+    scene.walls.push(this);
+    scene.RaycasterDomain.push(this.body);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class wallCircle {
+  constructor(scene, x, y, radius) {
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(
+        scene.add.circle(x, y, radius, 0xff0000),
+        scene.matter.add.circle(x, y, radius)
+      )
+      .setStatic(true)
+      .setFriction(1);
+
+    scene.walls.push(this);
+    scene.RaycasterDomain.push(this.body);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class wallPoly {
+  constructor(scene, x, y, points) {
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setFriction(1);
+
+    scene.walls.push(this);
+    scene.RaycasterDomain.push(this.body);
+  }
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class zoneRect {
   constructor(
+    scene,
+    x,
+    y,
     width,
     height,
-    id,
-    mapLoad,
-    mapCreate,
-    zoom = 0.8,
-    mouse = true,
-    debug = false,
-    background = 0xcccac0
+    angle,
+    callback,
+    color = 0xff0000,
+    alpha = 0.3
   ) {
-    this.robots = [];
-    this.walls = [];
-    this.marks = [];
-    this.zones = [];
-    this.game = new Phaser.Game({
-      width: width,
-      height: height,
-      backgroundColor: background,
-      type: Phaser.WEBGL,
-      canvas: document.getElementById(id),
-      scene: [
-        new Simul(
-          this.robots,
-          this.walls,
-          this.marks,
-          this.zones,
-          mapLoad,
-          mapCreate,
-          mouse
-        ),
-        new Over(height, zoom),
-      ],
-      physics: {
-        default: "matter",
-        matter: {
-          gravity: { y: 0, x: 0 },
-          debug: debug,
-        },
-      },
-      plugins: {
-        scene: [
-          {
-            key: "PhaserRaycaster",
-            plugin: PhaserRaycaster,
-            mapping: "raycasterPlugin",
-          },
-        ],
-      },
-    });
+    this.scene = scene;
+    this.callback = callback;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .gameObject(scene.add.rectangle(x, y, width, height))
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setAngle(angle)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback(this.scene.robots[i], this);
+      }
+    }
   }
 }
+
+class zoneCircle {
+  constructor(scene, x, y, radius, callback, color = 0xff0000, alpha = 0.3) {
+    this.scene = scene;
+    this.callback = callback;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(
+        scene.add.circle(x, y, radius),
+        scene.matter.add.circle(x, y, radius)
+      )
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback();
+      }
+    }
+  }
+}
+
+class zonePoly {
+  constructor(scene, x, y, points, callback, color = 0xff0000, alpha = 0.3) {
+    this.scene = scene;
+    this.callback = callback;
+    this.activated = false;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback(this, this.scene.robots[i]);
+      }
+    }
+  }
+}
+
+
+
+
