@@ -240,7 +240,7 @@ class zoneRect {
     angle,
     callback,
     color = 0xff0000,
-    alpha = 0.4
+    alpha = 0.3
   ) {
     this.scene = scene;
     this.callback = callback;
@@ -277,7 +277,7 @@ class zoneRect {
   update() {
     for (let i = 0; i < this.scene.robots.length; i++) {
       if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
-        this.callback();
+        this.callback(this.scene.robots[i], this);
       }
     }
   }
@@ -1186,7 +1186,7 @@ class Simul extends Phaser.Scene {
     this.mapCreate(this);
 
     if (this.mouse) {
-      this.matter.add.mouseSpring().constraint.stiffness = 0.0005;
+      this.matter.add.mouseSpring({ stiffness: 0.001 }).constraint;
     }
 
     this.scene.launch("overlay", [this.robots, this.cameras.main]);
@@ -1204,9 +1204,10 @@ class Simul extends Phaser.Scene {
 }
 
 class Over extends Phaser.Scene {
-  constructor(zoom) {
+  constructor(height, zoom) {
     super("overlay");
-    this.initZoom = zoom
+    this.height = height
+    this.initZoom = zoom;
   }
 
   init(data) {
@@ -1220,8 +1221,8 @@ class Over extends Phaser.Scene {
 
   create() {
     this.buttons = [];
-    this.echelle = this.add.image(70, this.height - 30, "echelle");
-    this.camera.zoom = this.initZoom
+    this.echelle = this.add.image(70, (this.height-30), "echelle").setScale(this.initZoom);
+    this.camera.zoom = this.initZoom;
 
     this.add
       .text(10, 60, "-", {
@@ -1284,8 +1285,14 @@ class Over extends Phaser.Scene {
 
     this.cursor = this.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
 
+    if(this.robots.length == 0){
     this.keyboardControl = true;
     this.cursor.setPosition(15 + this.buttons[0].width, 113);
+    } else {
+      this.keyboardControl = false
+      this.cursor.setPosition(15 + this.buttons[1].width, 140);
+      this.camera.startFollow(this.robots[0].body)
+    }
   }
 
   update() {
@@ -1298,15 +1305,15 @@ class Over extends Phaser.Scene {
       });
 
       if (inputs.up.isDown) {
-        this.camera.scrollY -= 5;
+        this.camera.scrollY -= 5 / this.camera.zoom;
       } else if (inputs.down.isDown) {
-        this.camera.scrollY += 5;
+        this.camera.scrollY += 5 / this.camera.zoom;
       }
 
       if (inputs.left.isDown) {
-        this.camera.scrollX -= 5;
+        this.camera.scrollX -= 5 / this.camera.zoom;
       } else if (inputs.right.isDown) {
-        this.camera.scrollX += 5;
+        this.camera.scrollX += 5 / this.camera.zoom;
       }
     }
   }
@@ -1319,7 +1326,7 @@ class simulation {
     id,
     mapLoad,
     mapCreate,
-    zoom,
+    zoom = 0.8,
     mouse = true,
     debug = false,
     background = 0xcccac0
@@ -1344,7 +1351,7 @@ class simulation {
           mapCreate,
           mouse
         ),
-        new Over(zoom),
+        new Over(height, zoom),
       ],
       physics: {
         default: "matter",
