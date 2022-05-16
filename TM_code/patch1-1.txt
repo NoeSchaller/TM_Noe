@@ -1,0 +1,10 @@
+- Ajout des paramètres zoom, mouse et debug à la class simulation
+- Ajout des zone
+- Ajout de wallPoy et MarkPoly (et zonePoly)
+- Correction: l'échelle s'ajoute comme prévu
+- Par défaut la caméra suit le premier robot
+- La caméra se déplace plus vite lorsque le zoom est faible em mode "Free"
+- Optimisation de pin.read_digital et pin.write_digital après les retours de la VF
+- Les capteurs infrarouges supportent maintenant la transparence des images PNG par exemple
+- Les leds sont un peu plus claires lorqu'elles sont éteintes
+- Correction: les robots appraissent toujours au dessus des autres éléments

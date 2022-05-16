@@ -1,8 +1,19 @@
 class simulation {
-  constructor(width, height, id, mapLoad, mapCreate, background = 0xcccac0) {
+  constructor(
+    width,
+    height,
+    id,
+    mapLoad,
+    mapCreate,
+    zoom = 0.8,
+    mouse = true,
+    debug = false,
+    background = 0xcccac0
+  ) {
     this.robots = [];
     this.walls = [];
     this.marks = [];
+    this.zones = [];
     this.game = new Phaser.Game({
       width: width,
       height: height,
@@ -10,14 +21,22 @@ class simulation {
       type: Phaser.WEBGL,
       canvas: document.getElementById(id),
       scene: [
-        new Simul(this.robots, this.walls, this.marks, mapLoad, mapCreate),
-        new Over(),
+        new Simul(
+          this.robots,
+          this.walls,
+          this.marks,
+          this.zones,
+          mapLoad,
+          mapCreate,
+          mouse
+        ),
+        new Over(height, zoom),
       ],
       physics: {
         default: "matter",
         matter: {
           gravity: { y: 0, x: 0 },
-          debug: 0,
+          debug: debug,
         },
       },
       plugins: {
@@ -34,13 +53,15 @@ class simulation {
 }
 
 class Simul extends Phaser.Scene {
-  constructor(robots, walls, marks, mapLoad, mapCreate) {
+  constructor(robots, walls, marks, zones, mapLoad, mapCreate, mouse) {
     super("simulation");
     this.mapLoad = mapLoad;
     this.mapCreate = mapCreate;
     this.robots = robots;
     this.walls = walls;
     this.marks = marks;
+    this.zones = zones;
+    this.mouse = mouse;
   }
 
   preload() {
@@ -64,10 +85,18 @@ class Simul extends Phaser.Scene {
 
     this.mapCreate(this);
 
+    if (this.mouse) {
+      this.matter.add.mouseSpring({ stiffness: 0.001 }).constraint;
+    }
+
     this.scene.launch("overlay", [this.robots, this.cameras.main]);
   }
 
   update() {
+    for (let i = 0; i < this.zones.length; i++) {
+      this.zones[i].update();
+    }
+
     for (let i = 0; i < this.robots.length; i++) {
       this.robots[i].update();
     }
@@ -75,8 +104,10 @@ class Simul extends Phaser.Scene {
 }
 
 class Over extends Phaser.Scene {
-  constructor() {
+  constructor(height, zoom) {
     super("overlay");
+    this.height = height
+    this.initZoom = zoom;
   }
 
   init(data) {
@@ -90,7 +121,8 @@ class Over extends Phaser.Scene {
 
   create() {
     this.buttons = [];
-    this.echelle = this.add.image(70, this.height - 30, "echelle");
+    this.echelle = this.add.image(70, (this.height-30), "echelle").setScale(this.initZoom);
+    this.camera.zoom = this.initZoom;
 
     this.add
       .text(10, 60, "-", {
@@ -153,12 +185,13 @@ class Over extends Phaser.Scene {
 
     this.cursor = this.add.text(0, 0, "<=", { color: "#000", fontSize: 20 });
 
-    if (this.robots.length !== 0) {
-      this.keyboardControl = false;
-      this.cursor.setPosition(15 + this.buttons[1].width, 140);
+    if(this.robots.length == 0){
+    this.keyboardControl = true;
+    this.cursor.setPosition(15 + this.buttons[0].width, 113);
     } else {
-      this.keyboardControl = true;
-      this.cursor.setPosition(15 + this.buttons[0].width, 113);
+      this.keyboardControl = false
+      this.cursor.setPosition(15 + this.buttons[1].width, 140);
+      this.camera.startFollow(this.robots[0].body)
     }
   }
 
@@ -172,15 +205,15 @@ class Over extends Phaser.Scene {
       });
 
       if (inputs.up.isDown) {
-        this.camera.scrollY -= 5;
+        this.camera.scrollY -= 5 / this.camera.zoom;
       } else if (inputs.down.isDown) {
-        this.camera.scrollY += 5;
+        this.camera.scrollY += 5 / this.camera.zoom;
       }
 
       if (inputs.left.isDown) {
-        this.camera.scrollX -= 5;
+        this.camera.scrollX -= 5 / this.camera.zoom;
       } else if (inputs.right.isDown) {
-        this.camera.scrollX += 5;
+        this.camera.scrollX += 5 / this.camera.zoom;
       }
     }
   }
@@ -332,11 +365,11 @@ class pin {
   }
 
   read_digital() {
-    return eval(`this.component.${this.read}()`);
+    return this.component[this.read]();
   }
 
   write_digital(set) {
-    eval(`this.component.${this.write}(${set})`);
+    this.component[this.write](set);
   }
 }
 
@@ -345,7 +378,7 @@ class ultrasonicD {
     this.reference = reference;
     this.scene = scene;
     this.range = range;
-    this.rotation = (angle / 180) * Math.PI;
+    this.angle = (angle / 180) * Math.PI;
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     this.rotationOrigin = Math.atan2(y, x);
 
@@ -361,7 +394,7 @@ class ultrasonicD {
         collisionRange: range * 10,
       })
       .setConeDeg(coneAngle)
-      .setAngle(reference.rotation + Math.PI / 2 + this.rotation);
+      .setAngle(reference.rotation + Math.PI / 2 + this.angle);
 
     this.rayCone.enablePhysics("matter");
 
@@ -398,7 +431,7 @@ class ultrasonicD {
           this.deltaOrigin *
             Math.sin(this.reference.rotation + this.rotationOrigin)
       )
-      .setAngle(this.reference.rotation - Math.PI / 2 + this.rotation);
+      .setAngle(this.reference.rotation - Math.PI / 2 + this.angle);
   }
 }
 
@@ -444,7 +477,7 @@ class infra {
           mark.picture
         );
         if (color !== null) {
-          if (color.v < 0.3) {
+          if (color.v < 0.3 && color.a >= 0.5) {
             return this.StateBlack;
           }
         }
@@ -479,7 +512,7 @@ class led {
     this.rotationOrigin = Math.atan2(y, x);
 
     this.led = scene.add
-      .circle(reference.x + x, reference.y + y, radius, 0x500000)
+      .circle(reference.x + x, reference.y + y, radius, 0x7a0000)
       .setDepth(2);
   }
 
@@ -504,7 +537,7 @@ class led {
     if (this.on) {
       this.led.fillColor = 0xff0000;
     } else {
-      this.led.fillColor = 0x500000;
+      this.led.fillColor = 0x7a0000;
     }
   }
 }
@@ -557,6 +590,7 @@ class motor {
     this.dir = 0;
     this.radius = height / 20;
     this.angle = 0;
+    this.powToSpeed = powToSpeed;
 
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2),
@@ -591,6 +625,7 @@ class motor {
         )
       )
       .setRotation(reference.rotation)
+      .setDepth(2)
       .setFrictionAir(3);
 
     scene.matter.add.constraint(this.wheel, reference, undefined, 1, {
@@ -645,7 +680,7 @@ class motor {
       const speed = this.powToSpeed(power) * this.radius * (12 / 100);
 
       if (speed < 0) {
-        speed = 0;
+        this.speed = 0;
       }
 
       if (dir == 0) {
@@ -1029,6 +1064,39 @@ class markCircle {
   }
 }
 
+class markPoly {
+  constructor(scene, x, y, points) {
+    this.picture = "geom";
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0x000000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setCollidesWith(0);
+
+    scene.marks.push(this);
+  }
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
 class Picture {
   constructor(scene, key, x, y, angle = 0, scaleX = 1, scaleY = 1) {
     this.picture = key;
@@ -1128,3 +1196,183 @@ class wallCircle {
     this.scale = { x: x, y: y };
   }
 }
+
+class wallPoly {
+  constructor(scene, x, y, points) {
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setFriction(1);
+
+    scene.walls.push(this);
+    scene.RaycasterDomain.push(this.body);
+  }
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+}
+
+class zoneRect {
+  constructor(
+    scene,
+    x,
+    y,
+    width,
+    height,
+    angle,
+    callback,
+    color = 0xff0000,
+    alpha = 0.3
+  ) {
+    this.scene = scene;
+    this.callback = callback;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = angle;
+    this.body = scene.matter.add
+      .gameObject(scene.add.rectangle(x, y, width, height))
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setAngle(angle)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback(this.scene.robots[i], this);
+      }
+    }
+  }
+}
+
+class zoneCircle {
+  constructor(scene, x, y, radius, callback, color = 0xff0000, alpha = 0.3) {
+    this.scene = scene;
+    this.callback = callback;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(
+        scene.add.circle(x, y, radius),
+        scene.matter.add.circle(x, y, radius)
+      )
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback();
+      }
+    }
+  }
+}
+
+class zonePoly {
+  constructor(scene, x, y, points, callback, color = 0xff0000, alpha = 0.3) {
+    this.scene = scene;
+    this.callback = callback;
+    this.activated = false;
+    this.position = { x: x, y: y };
+    this.scale = { x: 1, y: 1 };
+    this.angle = 0;
+    this.body = scene.matter.add
+      .gameObject(scene.add.polygon(x, y, points, 0xff0000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
+      .setStatic(true)
+      .setCollidesWith(0)
+      .setFillStyle(color, alpha);
+
+    scene.zones.push(this);
+  }
+
+  setPosition(x, y) {
+    this.body.setPosition(x, y);
+    this.position = { x: x, y: y };
+  }
+
+  setAngle(deg) {
+    this.body.setAngle(deg);
+    this.angle = deg;
+  }
+
+  setScale(x, y) {
+    this.body.setAngle(0);
+    this.body.setScale(x, y);
+    this.body.setAngle(this.angle);
+    this.scale = { x: x, y: y };
+  }
+
+  update() {
+    for (let i = 0; i < this.scene.robots.length; i++) {
+      if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
+        this.callback(this, this.scene.robots[i]);
+      }
+    }
+  }
+}
+
+
+
+
