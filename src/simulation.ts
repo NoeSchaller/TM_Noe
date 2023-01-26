@@ -1,9 +1,9 @@
 class Simulation {
-  public robots: object[];
-  public walls: object[];
-  public marks: object[];
-  public zones: object[];
-  protected game: object;
+  public robots: object[] = [];
+  public walls: object[] = [];
+  public marks: object[] = [];
+  public zones: object[] = [];
+  protected game: object = {};
   public constructor(
     width: number,
     height: number,
@@ -32,7 +32,7 @@ class Simulation {
             mapCreate,
             mouse
           ),
-          new Over(height, zoom),
+          new Overlay(height, zoom),
         ],
         physics: {
           default: "matter",
@@ -51,6 +51,6 @@ class Simulation {
           ],
         },
       });
-      */
+  */
   }
 }
