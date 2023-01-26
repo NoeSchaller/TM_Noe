@@ -1,0 +1,10 @@
+{
+    "extends": "@tsconfig/node16/tsconfig.json",
+
+    "compilerOptions" : {"allowJs": false,
+                        "outDir": "compiled"},
+
+    "include": ["src/**/*"],
+
+    "exclude": ["Phaser_plugin/*"]
+}
