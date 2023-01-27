@@ -1,10 +1,14 @@
-class wallCircle {
+class CircleWall {
   protected position: { x: number; y: number };
   protected scale: { x: number; y: number };
   protected angle: number;
   protected body: any;
+  protected type: string;
+  protected shape: string;
 
   constructor(scene: any, x: number, y: number, radius: number) {
+    this.type = "wall";
+    this.shape = "circle";
     this.position = { x: x, y: y };
     this.scale = { x: 1, y: 1 };
     this.angle = 0;

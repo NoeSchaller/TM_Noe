@@ -1,4 +1,4 @@
-class RectangleWall {
+class RectangleMark {
   protected position: { x: number; y: number };
   protected scale: { x: number; y: number };
   protected angle: number;
@@ -14,18 +14,17 @@ class RectangleWall {
     height: number,
     angle: number = 0
   ) {
-    this.type = "wall";
+    this.type = "mark";
     this.shape = "rectangle";
     this.position = { x: x, y: y };
     this.scale = { x: 1, y: 1 };
     this.angle = angle;
     this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
-      .setStatic(true)
+      .gameObject(scene.add.rectangle(x, y, width, height, 0x000000))
+      .setCollidesWith(0)
       .setAngle(angle);
 
-    scene.walls.push(this);
-    scene.RaycasterDomain.push(this.body);
+    scene.marks.push(this);
   }
 
   setPosition(x: number, y: number) {

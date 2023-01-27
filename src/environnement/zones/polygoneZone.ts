@@ -6,6 +6,8 @@ class PolygoneZone {
   protected scale: { x: number; y: number };
   protected angle: number;
   protected body: any;
+  protected type: string;
+  protected shape: string;
 
   constructor(
     scene: any,
@@ -16,6 +18,8 @@ class PolygoneZone {
     color: number = 0xff0000,
     alpha: number = 0.3
   ) {
+    this.type = "zone";
+    this.shape = "polygone";
     this.scene = scene;
     this.callback = callback;
     this.activated = false;

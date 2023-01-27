@@ -5,6 +5,8 @@ class CircleZone {
   protected scale: { x: number; y: number };
   protected angle: number;
   protected body: any;
+  protected type: string;
+  protected shape: string;
 
   constructor(
     scene: any,
@@ -15,6 +17,8 @@ class CircleZone {
     color: number = 0xff0000,
     alpha: number = 0.3
   ) {
+    this.type = "zone";
+    this.shape = "circle";
     this.scene = scene;
     this.callback = callback;
     this.position = { x: x, y: y };

@@ -5,6 +5,8 @@ class RectangleZone {
   protected scale: { x: number; y: number };
   protected angle: number;
   protected body: any;
+  protected type: string;
+  protected shape: string;
 
   constructor(
     scene: any,
@@ -17,6 +19,8 @@ class RectangleZone {
     color = 0xff0000,
     alpha = 0.3
   ) {
+    this.type = "zone";
+    this.shape = "rectangle";
     this.scene = scene;
     this.callback = callback;
     this.position = { x: x, y: y };

@@ -1,33 +1,27 @@
-class RectangleWall {
+class PolygoneMark {
+
   protected position: { x: number; y: number };
   protected scale: { x: number; y: number };
   protected angle: number;
   protected body: any;
   protected type: string;
   protected shape: string;
-
-  constructor(
-    scene: any,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    angle: number = 0
-  ) {
-    this.type = "wall";
-    this.shape = "rectangle";
+  
+  constructor(scene: any, x: number, y: number, points: any) {
+    this.type = "mark";
+    this.shape = "polygone";
     this.position = { x: x, y: y };
     this.scale = { x: 1, y: 1 };
-    this.angle = angle;
+    this.angle = 0;
     this.body = scene.matter.add
-      .gameObject(scene.add.rectangle(x, y, width, height, 0xff0000))
+      .gameObject(scene.add.polygon(x, y, points, 0x000000), {
+        shape: { type: "fromVerts", verts: points, flagInternal: true },
+      })
       .setStatic(true)
-      .setAngle(angle);
+      .setCollidesWith(0);
 
-    scene.walls.push(this);
-    scene.RaycasterDomain.push(this.body);
+    scene.marks.push(this);
   }
-
   setPosition(x: number, y: number) {
     this.body.setPosition(x, y);
     this.position = { x: x, y: y };
