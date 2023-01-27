@@ -1,31 +1,33 @@
-import { ClassElement } from "typescript";
-
 class Motor {
-  readonly speed: number;
-  readonly power: number;
-  readonly direction: number;
-  readonly radius: number;
-  readonly angle: number;
+  protected scene: any;
+  protected speed: number;
+  protected power: number;
+  protected direction: number;
+  protected radius: number;
+  protected angle: number;
+  private powerToSpeed: Function;
   readonly deltaOrigin: number;
   readonly rotationOrigin: number;
-  readonly wheel: object;
-
+  readonly wheel: any;
   constructor(
-    readonly scene: object,
-    readonly reference: object,
-    readonly x: number,
-    readonly y: number,
-    readonly width: number,
-    readonly height: number,
-    readonly point1: { x: number; y: number },
-    readonly point2: { x: number; y: number },
-    readonly powerToSpeed: Function
+    scene: any,
+    reference: any,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    point1: {x:number, y:number},
+    point2: {x: number,y:number},
+    powerToSpeed: Function
   ) {
+    this.scene = scene;
     this.speed = 0;
     this.power = 0;
     this.direction = 0;
     this.radius = height / 20;
     this.angle = 0;
+    this.powerToSpeed = powerToSpeed;
+
     this.deltaOrigin = Math.sqrt(x ** 2 + y ** 2);
     const deltaPoint1 = Math.sqrt(point1.x ** 2 + point1.y ** 2),
       deltaPoint2 = Math.sqrt(point2.x ** 2 + point2.y ** 2);
@@ -105,5 +107,45 @@ class Motor {
         y: deltaPoint2 * Math.sin(rotationPoint2 + reference.rotation),
       },
     });
+  }
+
+  setSpeed(direction: number, power: number) {
+    if (power >= 0 && power <= 255) {
+      this.direction = direction;
+      this.power = power;
+      const speed = this.powerToSpeed(power) * this.radius * (12 / 100);
+
+      if (speed < 0) {
+        this.speed = 0;
+      }
+
+      if (direction == 0) {
+        this.speed = 0;
+      } else if (direction == 1) {
+        this.speed = speed;
+      } else if (direction == 2) {
+        this.speed = -speed;
+      }
+    }
+  }
+
+  update() {
+    const deltaX = this.wheel.x - this.wheel.body.positionPrev.x,
+      deltaY = this.wheel.y - this.wheel.body.positionPrev.y,
+      rotationSpeed =
+        Math.round(
+          (Math.sqrt(deltaX ** 2 + deltaY ** 2) / this.radius) *
+            (100 / 12) *
+            5.6 *
+            100
+        ) / 100;
+
+    this.angle += Math.round((rotationSpeed / Math.PI) * 2 * 80);
+
+    this.wheel.body.positionImpulse.x =
+      Math.cos(this.wheel.rotation - Math.PI / 2) * this.speed;
+
+    this.wheel.body.positionImpulse.y =
+      Math.sin(this.wheel.rotation - Math.PI / 2) * this.speed;
   }
 }
