@@ -36,24 +36,24 @@ class CircleZone {
     scene.zones.push(this);
   }
 
-  setPosition(x: number, y: number) {
+  public setPosition(x: number, y: number) {
     this.body.setPosition(x, y);
     this.position = { x: x, y: y };
   }
 
-  setAngle(deg: number) {
+  public setAngle(deg: number) {
     this.body.setAngle(deg);
     this.angle = deg;
   }
 
-  setScale(x: number, y: number) {
+  public setScale(x: number, y: number) {
     this.body.setAngle(0);
     this.body.setScale(x, y);
     this.body.setAngle(this.angle);
     this.scale = { x: x, y: y };
   }
 
-  update() {
+  public update() {
     for (let i = 0; i < this.scene.robots.length; i++) {
       if (this.scene.matter.overlap(this.body, this.scene.robots[i].body)) {
         this.callback();
