@@ -2,7 +2,10 @@
     "extends": "@tsconfig/node16/tsconfig.json",
 
     "compilerOptions" : {"allowJs": false,
-                        "outDir": "compiled"},
+                        "outDir": "compiled",
+                        "lib" : ["dom", "ES6"]},
+
+    
 
     "include": ["src/**/*"],
 

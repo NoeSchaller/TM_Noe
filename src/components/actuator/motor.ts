@@ -1,10 +1,10 @@
 class Motor {
   protected scene: any;
   protected speed: number;
-  protected power: number;
-  protected direction: number;
+  public power: number;
+  public direction: number;
   protected radius: number;
-  protected angle: number;
+  public angle: number;
   private powerToSpeed: Function;
   readonly deltaOrigin: number;
   readonly rotationOrigin: number;

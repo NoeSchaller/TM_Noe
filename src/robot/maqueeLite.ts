@@ -1,22 +1,21 @@
 class MaqueenLite {
-  protected name: string;
-  protected type: string;
+  public name: string;
+  public type: string;
   protected angle: number;
   protected position: { x: number; y: number };
-  protected body: any;
-  protected Lmotor: Motor;
-  protected Rmotor: Motor;
-  protected ultrasonic: any;
-  protected irL: any;
-  protected infraRedRight: any;
-  protected LLed: any;
-  protected RLed: any;
-  protected pin13: any;
-  protected pin14: any;
-  protected pin8: any;
-  protected pin12: any;
-  protected pin1: any;
-  protected i2c: any;
+  readonly body: any;
+  readonly leftMotor: Motor;
+  readonly rightMotor: Motor;
+  public ultrasonic: Ultrasonic;
+  public infraredLeft: Infrared;
+  public infraredRight: Infrared;
+  protected ledLeft: Led;
+  protected ledRight: Led;
+  public pin13: Pin;
+  public pin14: Pin;
+  public pin8: Pin;
+  public pin12: Pin;
+  public i2c: I2cLite;
   constructor(scene: any, name: string, x: number, y: number, angle: number) {
     //mise  en place de variables
     this.name = name;
@@ -44,7 +43,7 @@ class MaqueenLite {
       );
     };
 
-    this.Lmotor = new Motor(
+    this.leftMotor = new Motor(
       scene,
       this.body,
       -35,
@@ -56,7 +55,7 @@ class MaqueenLite {
       speedGrowth
     );
 
-    this.Rmotor = new Motor(
+    this.rightMotor = new Motor(
       scene,
       this.body,
       35,
@@ -72,21 +71,20 @@ class MaqueenLite {
     this.ultrasonic = new Ultrasonic(scene, this.body, 0, -35);
 
     //mise en place des capteurs infrarouges
-    this.irL = new Infrared(scene, this.body, -7, -16, 2, false);
+    this.infraredLeft = new Infrared(scene, this.body, -7, -16, 2, false);
 
-    this.infraRedRight = new Infrared(scene, this.body, 7, -16, 2, false);
+    this.infraredRight = new Infrared(scene, this.body, 7, -16, 2, false);
 
     //mise en place des leds
-    this.LLed = new Led(scene, this.body, -18, -32);
+    this.ledLeft = new Led(scene, this.body, -18, -32);
 
-    this.RLed = new Led(scene, this.body, 18, -32);
+    this.ledRight = new Led(scene, this.body, 18, -32);
 
     // mise en place des pins
-    this.pin13 = new Pin(this.irL, "isMarked"); //irLeft
-    this.pin14 = new Pin(this.infraRedRight, "isMarked"); // irRight
-    this.pin8 = new Pin(this.LLed, "getOn", "setOn"); //LLed
-    this.pin12 = new Pin(this.RLed, "getOn", "setOn"); // RLed
-    this.pin1; // ultrason
+    this.pin13 = new Pin(this.infraredLeft, "isMarked"); //irLeft
+    this.pin14 = new Pin(this.infraredRight, "isMarked"); // irRight
+    this.pin8 = new Pin(this.ledLeft, "getOn", "setOn"); //ledLeft
+    this.pin12 = new Pin(this.ledRight, "getOn", "setOn"); // ledRight
 
     // mise en place de l'i2c
     this.i2c = new I2cLite(this);
@@ -100,58 +98,58 @@ class MaqueenLite {
   }
 
   update() {
-    this.Lmotor.update();
-    this.Rmotor.update();
+    this.leftMotor.update();
+    this.rightMotor.update();
     this.ultrasonic.update();
-    this.irL.update();
-    this.infraRedRight.update();
-    this.LLed.update();
-    this.RLed.update();
+    this.infraredLeft.update();
+    this.infraredRight.update();
+    this.ledLeft.update();
+    this.ledRight.update();
     this.position = { x: this.body.x, y: this.body.y };
     this.angle = this.body.angle;
   }
 
   setPosition(x: number, y: number) {
     this.body.setPosition(x, y);
-    this.Lmotor.wheel.setPosition(
+    this.leftMotor.wheel.setPosition(
       x +
-        this.Lmotor.deltaOrigin *
-          Math.cos(this.Lmotor.rotationOrigin + this.body.rotation),
+        this.leftMotor.deltaOrigin *
+          Math.cos(this.leftMotor.rotationOrigin + this.body.rotation),
       y +
-        this.Lmotor.deltaOrigin *
-          Math.sin(this.Lmotor.rotationOrigin + this.body.rotation)
+        this.leftMotor.deltaOrigin *
+          Math.sin(this.leftMotor.rotationOrigin + this.body.rotation)
     );
-    this.Rmotor.wheel.setPosition(
+    this.rightMotor.wheel.setPosition(
       x +
-        this.Rmotor.deltaOrigin *
-          Math.cos(this.Rmotor.rotationOrigin + this.body.rotation),
+        this.rightMotor.deltaOrigin *
+          Math.cos(this.rightMotor.rotationOrigin + this.body.rotation),
       y +
-        this.Rmotor.deltaOrigin *
-          Math.sin(this.Rmotor.rotationOrigin + this.body.rotation)
+        this.rightMotor.deltaOrigin *
+          Math.sin(this.rightMotor.rotationOrigin + this.body.rotation)
     );
   }
 
   setAngle(deg: number) {
     this.body.setAngle(deg);
 
-    this.Lmotor.wheel.setPosition(
+    this.leftMotor.wheel.setPosition(
       this.body.x +
-        this.Lmotor.deltaOrigin *
-          Math.cos((deg / 180) * Math.PI + this.Lmotor.rotationOrigin),
+        this.leftMotor.deltaOrigin *
+          Math.cos((deg / 180) * Math.PI + this.leftMotor.rotationOrigin),
       this.body.y +
-        this.Lmotor.deltaOrigin *
-          Math.sin((deg / 180) * Math.PI + this.Lmotor.rotationOrigin)
+        this.leftMotor.deltaOrigin *
+          Math.sin((deg / 180) * Math.PI + this.leftMotor.rotationOrigin)
     );
-    this.Lmotor.wheel.setAngle(deg);
+    this.leftMotor.wheel.setAngle(deg);
 
-    this.Rmotor.wheel.setPosition(
+    this.rightMotor.wheel.setPosition(
       this.body.x +
-        this.Rmotor.deltaOrigin *
-          Math.cos((deg / 180) * Math.PI + this.Rmotor.rotationOrigin),
+        this.rightMotor.deltaOrigin *
+          Math.cos((deg / 180) * Math.PI + this.rightMotor.rotationOrigin),
       this.body.y +
-        this.Rmotor.deltaOrigin *
-          Math.sin((deg / 180) * Math.PI + this.Rmotor.rotationOrigin)
+        this.rightMotor.deltaOrigin *
+          Math.sin((deg / 180) * Math.PI + this.rightMotor.rotationOrigin)
     );
-    this.Rmotor.wheel.setAngle(deg);
+    this.rightMotor.wheel.setAngle(deg);
   }
 }
