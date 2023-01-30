@@ -20,16 +20,16 @@ class Overlay extends Phaser.Scene {
     this.buttons = [];
   }
 
-  init(data: any[]) {
+  public init(data: Array<any>) {
     this.robots = data[0];
     this.camera = data[1];
   }
 
-  preload() {
+  public preload() {
     this.load.image("echelle", "assets/scale.png");
   }
 
-  create() {
+  public create() {
     this.echelle = this.add
       .image(70, this.height - 30, "echelle")
       .setScale(this.initZoom);
@@ -106,7 +106,7 @@ class Overlay extends Phaser.Scene {
     }
   }
 
-  update() {
+  public update() {
     if (this.keyboardControl) {
       const inputs = this.input.keyboard.addKeys({
         up: "up",

@@ -32,7 +32,7 @@ class Field extends Phaser.Scene {
     this.RaycasterDomain = [];
   }
 
-  preload() {
+  public preload() {
     this.load.json("liteShape", "assets/liteShape.json");
     this.load.json("plusShape", "assets/plusShape.json");
 
@@ -48,7 +48,7 @@ class Field extends Phaser.Scene {
     this.mapLoad(this);
   }
 
-  create() {
+  public create() {
     this.mapCreate(this);
 
     if (this.mouse) {
@@ -58,7 +58,7 @@ class Field extends Phaser.Scene {
     this.scene.launch("overlay", [this.robots, this.cameras.main]);
   }
 
-  update() {
+  public update() {
     for (let i = 0; i < this.zones.length; i++) {
       this.zones[i].update();
     }

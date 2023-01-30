@@ -93,11 +93,11 @@ class MaqueenLite {
     scene.robots.push(this);
   }
 
-  getDistance() {
+  public getDistance() {
     return this.ultrasonic.getDistance();
   }
 
-  update() {
+  public update() {
     this.leftMotor.update();
     this.rightMotor.update();
     this.ultrasonic.update();
@@ -109,7 +109,7 @@ class MaqueenLite {
     this.angle = this.body.angle;
   }
 
-  setPosition(x: number, y: number) {
+  public setPosition(x: number, y: number) {
     this.body.setPosition(x, y);
     this.leftMotor.wheel.setPosition(
       x +
@@ -129,7 +129,7 @@ class MaqueenLite {
     );
   }
 
-  setAngle(deg: number) {
+  public setAngle(deg: number) {
     this.body.setAngle(deg);
 
     this.leftMotor.wheel.setPosition(
